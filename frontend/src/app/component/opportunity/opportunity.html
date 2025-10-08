@@ -1,0 +1,84 @@
+<section class="w-full">
+    <div>
+
+        <h1 class="text-2xl ">Detail related to Contact</h1>
+    </div>
+
+
+    <div class="text-2xl w-full  text-white p-6 bg-zinc-800 rounded-lg">
+        <div class="flex justify-between items-center">
+            <h1 class="mb-4 font-bold text-3xl">Contacts</h1>
+            <button
+                class="py-2 px-4 bg-white text-2xl text-black font-normal rounded-2xl cursor-pointer focus:active:scale-95 transition-all "
+                (click)="toogleAddOpportunity()"> {{addOpportunity ? "X" : "Create Contact"}}</button>
+        </div>
+
+        @if (addOpportunity) {
+        <form
+            class="bg-gray-500/40 shadow-2xl p-6 rounded-xl transition-all transition-normal mt-5 w-full max-w-2xl mx-auto space-y-4 text-white">
+            <!-- Grid for responsiveness -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                <!-- Opportunity Name -->
+                <div class="flex flex-col sm:col-span-2">
+                    <label for="name" class="text-sm font-medium text-gray-300 mb-1">Opportunity Name</label>
+                    <input name="name" id="name" type="text" [(ngModel)]="addOpportunityToDatabase.name" class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg 
+                 focus:ring-2 focus:ring-gray-400 focus:outline-none" />
+                </div>
+
+                <!-- Stage -->
+                <div class="flex flex-col">
+                    <label for="stage" class="text-sm font-medium text-gray-300 mb-1">Stage</label>
+
+                    <input name="name" id="name" type="text" [(ngModel)]="addOpportunityToDatabase.stage" class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg 
+                 focus:ring-2 focus:ring-gray-400 focus:outline-none" />
+                </div>
+
+                <!-- Amount -->
+                <div class="flex flex-col">
+                    <label for="amount" class="text-sm font-medium text-gray-300 mb-1">Amount</label>
+                    <input name="amount" id="amount" type="number" [(ngModel)]="addOpportunityToDatabase.amount" class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg 
+                 focus:ring-2 focus:ring-gray-400 focus:outline-none" />
+                </div>
+
+                <!-- Close Date -->
+                <div class="flex flex-col sm:col-span-2">
+                    <label for="closeDate" class="text-sm font-medium text-gray-300 mb-1">Close Date</label>
+                    <input name="closeDate" id="closeDate" type="date" [(ngModel)]="addOpportunityToDatabase.closeDate"
+                        class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg 
+                 focus:ring-2 focus:ring-gray-400 focus:outline-none" />
+                </div>
+
+                <!-- Related Account -->
+                <div class="flex flex-col sm:col-span-2">
+                    <label for="accountId" class="text-sm font-medium text-gray-300 mb-1">Choose Account</label>
+                    <select id="accountId" name="accountId" [(ngModel)]="accountId" class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg 
+                 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        <option value="" disabled selected>Select an account</option>
+                        @for (account of accountReference; track $index) {
+                        <option [ngValue]="account.id" class="text-black bg-zinc-400">
+                            {{ account.name }}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+                <button type="button"
+                    class="bg-white text-black px-6 py-2 rounded-lg font-semibold hover:bg-gray-200 transition"
+                    (click)="addToDB()">
+                    Add Opportunity
+                </button>
+            </div>
+        </form>
+        }
+
+
+        <div class="flex w-full sm:max-w-8xl flex-shrink gap-6 p-4">
+            <app-opportunity-card [allOpportunity]="allOpportunity()" (editOccured)="getAllOpportunity()"></app-opportunity-card>
+
+        </div>
+    </div>
+</section>

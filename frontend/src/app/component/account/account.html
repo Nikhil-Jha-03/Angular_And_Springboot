@@ -1,0 +1,57 @@
+<section class="w-full">
+    <div>
+
+        <h1 class="text-2xl ">Detail related to Account</h1>
+    </div>
+
+
+    <div class="text-2xl w-full  text-white p-6 bg-zinc-800 rounded-lg">
+        <div class="flex justify-between items-center">
+            <h1 class="mb-4 font-bold text-3xl">Accounts</h1>
+            <button
+                class="py-2 px-4 bg-white text-2xl text-black font-normal rounded-2xl cursor-pointer focus:active:scale-95 transition-all "
+                (click)="toogleAddAccount()"> {{addAccount ? "X" : "Create Account"}}</button>
+        </div>
+
+        @if (addAccount) {
+        <form
+            class="bg-gray-500/40 shadow-2xl p-6 rounded-xl transition-all transition-normal mt-5 w-full max-w-2xl mx-auto space-y-4 text-white">
+            <!-- Grid for responsiveness -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Name -->
+                <div class="flex flex-col">
+                    <label for="name" class="text-sm font-medium text-gray-300 mb-1">Name</label>
+                    <input  name="name" id="name" type="text" [(ngModel)]="addAccountToDatabase.name"
+                        class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg focus:ring-2 focus:ring-gray-400 focus:outline-none" />
+                </div>
+
+                <!-- Industry -->
+                <div class="flex flex-col">
+                    <label for="industry" class="text-sm font-medium text-gray-300 mb-1">Industry</label>
+                    <input  name="industry" id="industry" type="text" [(ngModel)]="addAccountToDatabase.industry"
+                        class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg focus:ring-2 focus:ring-gray-400 focus:outline-none" />
+                </div>
+
+                <!-- Annual Revenue (full width) -->
+                <div class="flex flex-col sm:col-span-2">
+                    <label for="annualRevenue" class="text-sm font-medium text-gray-300 mb-1">Annual Revenue</label>
+                    <input name="annualRevenue" id="annualRevenue" type="number" [(ngModel)]="addAccountToDatabase.annualRevenue"
+                        class="px-3 py-2 border border-gray-600 bg-zinc-900 text-white rounded-lg focus:ring-2 focus:ring-gray-400 focus:outline-none" />
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+                <button type="button"
+                    class="bg-white text-black px-6 py-2 rounded-lg font-semibold hover:bg-gray-200 transition" (click)="addToDB()">
+                    Add Account
+                </button>
+            </div>
+        </form>
+        }
+
+        <div class="flex w-full sm:max-w-8xl flex-shrink gap-6 p-4">
+            <app-card [allAccount]="allAccount()" (editOccured)="getAlluser()"></app-card>
+        </div>
+    </div>
+</section>
