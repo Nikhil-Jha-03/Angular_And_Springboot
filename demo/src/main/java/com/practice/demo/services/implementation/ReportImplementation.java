@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 import com.practice.demo.dto.ReportRequestDTO;
 import com.practice.demo.dto.ReportResponseDTO;
 import com.practice.demo.entity.ReportType;
+import com.practice.demo.payload.HandlevariousErrors;
 import com.practice.demo.repository.ReportTypeRepository;
 import com.practice.demo.services.ReportService;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,48 +27,63 @@ public class ReportImplementation implements ReportService {
 
     @Override
     public ReportResponseDTO getColumnData(ReportRequestDTO reportRequestDTO, Long reportTypeId) {
-        // Implement your logic here to fetch and return the report data based on
-        // reportRequestDTO and reportTypeId
 
-        ReportType reportType = reportTypeRepository.findById(reportTypeId)
-                .orElseThrow(() -> new RuntimeException("ReportType not found with id: " + reportTypeId));
-        String table = reportType.getPrimaryObject();
-        System.out.println("Table Name: " + table);
+        try {
+            // 1. Get Report Type
+            ReportType reportType = reportTypeRepository.findById(reportTypeId)
+                    .orElseThrow(() -> new HandlevariousErrors("ReportType not found with id: " + reportTypeId));
 
-        List<String> selectedColumns = reportRequestDTO.getSelectedColumns();
-        if (selectedColumns == null || selectedColumns.isEmpty()) {
-            throw new RuntimeException("No columns selected for the report.");
-        }
-        String sql = "SELECT " + String.join(",", selectedColumns) + " FROM " + table;
+            String table = reportType.getPrimaryObject();
 
-        jakarta.persistence.Query query = entityManager.createNativeQuery(sql);
-        List<Object[]> result = query.getResultList();
-
-        List<Map<String, Object>> rows = new ArrayList<>();
-        for (Object rowObj : result) {
-            Map<String, Object> map = new LinkedHashMap<>();
-
-            if (selectedColumns.size() == 1) {
-                // Single column returns Object directly
-                map.put(selectedColumns.get(0), rowObj);
-            } else {
-                // Multiple columns returns Object[]
-                Object[] row = (Object[]) rowObj;
-                for (int i = 0; i < selectedColumns.size(); i++) {
-                    map.put(selectedColumns.get(i), row[i]);
-                }
+            // 2. Validate Selected Columns
+            List<String> selectedColumns = reportRequestDTO.getSelectedColumns();
+            if (selectedColumns == null || selectedColumns.isEmpty()) {
+                throw new HandlevariousErrors("No columns selected for the report.");
             }
 
-            rows.add(map);
+            // 3. Build SQL Query with proper spacing
+            String sql = "SELECT " + String.join(", ", selectedColumns) + " FROM " + table;
+
+            // 4. Execute Query
+            Query query = entityManager.createNativeQuery(sql);
+            List<Object> result = query.getResultList();
+
+            // 5. Convert Results to Map Structure
+            List<Map<String, Object>> rows = new ArrayList<>();
+            for (Object rowObj : result) {
+                Map<String, Object> map = new LinkedHashMap<>();
+
+                if (selectedColumns.size() == 1) {
+                    // Single column case
+                    map.put(selectedColumns.get(0), rowObj);
+                } else {
+                    // Multiple columns case
+                    System.out.println("Processing row object: " + rowObj); // Debug log
+                    Object[] row = (Object[]) rowObj;
+                    for (int i = 0; i < selectedColumns.size(); i++) {
+                        System.out.println("Mapping column: " + selectedColumns.get(i) + " to value: " + row[i]); // Debug
+                                                                                                                  // log
+                        map.put(selectedColumns.get(i), row[i]);
+                    }
+
+                    System.out.println("Mapped row: " + map); // Debug log
+                }
+                rows.add(map);
+
+                System.out.println("Added row to results: " + map); // Debug log
+            }
+
+            // 6. Build and Return Response
+            ReportResponseDTO reportResponseDTO = new ReportResponseDTO();
+            reportResponseDTO.setColumns(selectedColumns);
+            reportResponseDTO.setRows(rows);
+
+            return reportResponseDTO;
+
+        } catch (HandlevariousErrors e) {
+            throw e; // Re-throw custom exceptions
+        } catch (Exception e) {
+            throw new HandlevariousErrors("Error generating report: " + e.getMessage());
         }
-        System.out.println("Rows: " + rows);
-
-        ReportResponseDTO reportResponseDTO = new ReportResponseDTO();
-        reportRequestDTO.setSelectedColumns(selectedColumns);
-        reportResponseDTO.setRows(rows);
-
-        return reportResponseDTO;
-
     }
-
 }
