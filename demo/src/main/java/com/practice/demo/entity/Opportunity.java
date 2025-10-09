@@ -48,3 +48,4 @@ public class Opportunity {
     private Accounts opportunityAccount;
     
 }
+
