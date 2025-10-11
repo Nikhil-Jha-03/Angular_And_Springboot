@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.practice.demo.dto.ReportRequestDTO;
 import com.practice.demo.dto.ReportResponseDTO;
-import com.practice.demo.entity.ReportType;
 import com.practice.demo.services.ReportService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class ReportController {
 
         return ResponseEntity.ok().body(reportService.getColumnData(reportRequestDTO, reportTypeId));
     }
-    
+
 
 
 }

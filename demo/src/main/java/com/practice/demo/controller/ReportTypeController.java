@@ -11,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("reporttype")
+@CrossOrigin
 public class ReportTypeController {
 
     private final ReportTypeService reportTypeService;

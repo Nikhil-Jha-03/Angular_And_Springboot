@@ -1,0 +1,43 @@
+<section class="w-7xl m-auto bg-zinc-900 p-5 rounded-2xl">
+    <div>
+        <div class="flex items-center gap-2">
+            <label for="chooseTable" class="text-sm font-medium text-white">
+                Choose Table:
+            </label>
+
+            <select (change)="handleGetTableContent()" id="chooseTable" name="chooseTable" [(ngModel)]="selectedTypeId"
+                class="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                @if (reportTypeData().length > 0) {
+                <option class="text-sm text-gray-500">Select Type</option>
+                @for (item of reportTypeData(); track item.id) {
+                <option [value]="item.id">{{ item.name }}</option>
+                }
+                } @else {
+                <option disabled selected>No data available</option>
+                }
+            </select>
+
+            <button type="button"
+                class="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                Select
+            </button>
+        </div>
+
+        <section class="mt-5">
+            <div class="grid grid-cols-[1fr_3fr] gap-4 w-full mx-auto">
+
+                <!-- Left small box -->
+                <div class="bg-zinc-500 text-white rounded-lg p-4 shadow">
+                    <h1 class="text-lg font-semibold">Select the data to display</h1>
+                </div>
+
+                <!-- Right larger box -->
+                <div class="bg-amber-600 text-white rounded-lg p-4 shadow">
+                    <h1 class="text-lg font-semibold">Actutal table to show data</h1>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+</section>

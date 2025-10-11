@@ -58,19 +58,12 @@ public class ReportImplementation implements ReportService {
                     map.put(selectedColumns.get(0), rowObj);
                 } else {
                     // Multiple columns case
-                    System.out.println("Processing row object: " + rowObj); // Debug log
                     Object[] row = (Object[]) rowObj;
                     for (int i = 0; i < selectedColumns.size(); i++) {
-                        System.out.println("Mapping column: " + selectedColumns.get(i) + " to value: " + row[i]); // Debug
-                                                                                                                  // log
                         map.put(selectedColumns.get(i), row[i]);
                     }
-
-                    System.out.println("Mapped row: " + map); // Debug log
                 }
                 rows.add(map);
-
-                System.out.println("Added row to results: " + map); // Debug log
             }
 
             // 6. Build and Return Response
@@ -81,7 +74,7 @@ public class ReportImplementation implements ReportService {
             return reportResponseDTO;
 
         } catch (HandlevariousErrors e) {
-            throw e; // Re-throw custom exceptions
+            throw e; 
         } catch (Exception e) {
             throw new HandlevariousErrors("Error generating report: " + e.getMessage());
         }
