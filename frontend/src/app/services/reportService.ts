@@ -1,8 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, retry } from "rxjs";
 import { ReportTypeModel } from "../component/models/reportTypeModel";
 import { ReportColumnModel } from "../component/models/reportColumnModel";
+import { ReportRequestModel } from "../component/models/reportRequestModel";
+import { TableData } from "../component/models/TableDataModel";
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +19,11 @@ export class ReportService {
         return this.http.get<ReportTypeModel[]>(`${this.baseUrl}/reporttype/allreport`)
     }
 
-    getColumnsOfType(id: number): Observable<ReportColumnModel>{
-        return this.http.get<ReportColumnModel>(`${this.baseUrl}/report/column/${id}`)
+    getColumnsOfType(id: number): Observable<ReportColumnModel[]>{
+        return this.http.get<ReportColumnModel[]>(`${this.baseUrl}/report/column/${id}`)
+    }
+
+    getReportData(id: number,selectedColumns:ReportRequestModel[]): Observable<TableData>{
+        return this.http.post<TableData>(`${this.baseUrl}/report/data/${id}`,{selectedColumns})
     }
 }

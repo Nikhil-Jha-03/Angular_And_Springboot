@@ -1,14 +1,14 @@
 <section class="w-7xl m-auto bg-zinc-900 p-5 rounded-2xl">
     <div>
         <div class="flex items-center gap-2">
-            <label for="chooseTable" class="text-sm font-medium text-white">
+            <label for="chooseTable" class="text-sm font-medium text-white ">
                 Choose Table:
             </label>
 
             <select (change)="handleGetTableContent()" id="chooseTable" name="chooseTable" [(ngModel)]="selectedTypeId"
-                class="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                class="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold bg-white">
+                <option class="text-sm text-gray-500 " value={{0}} disabled selected>Select Type</option>
                 @if (reportTypeData().length > 0) {
-                <option class="text-sm text-gray-500">Select Type</option>
                 @for (item of reportTypeData(); track item.id) {
                 <option [value]="item.id">{{ item.name }}</option>
                 }
@@ -16,25 +16,80 @@
                 <option disabled selected>No data available</option>
                 }
             </select>
-
-            <button type="button"
-                class="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                Select
-            </button>
         </div>
 
         <section class="mt-5">
             <div class="grid grid-cols-[1fr_3fr] gap-4 w-full mx-auto">
 
                 <!-- Left small box -->
-                <div class="bg-zinc-500 text-white rounded-lg p-4 shadow">
-                    <h1 class="text-lg font-semibold">Select the data to display</h1>
+                <div
+                    class="bg-white border-2 text-gray-800 rounded-xl shadow-md p-5 w-full max-w-md mx-auto  border-gray-200">
+                    @if (seletedReportTypeColumnData() && seletedReportTypeColumnData().length > 0) {
+                    <h2 class="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">Select Columns</h2>
+
+                    <div class="space-y-3 overflow-y-auto">
+                        @for (item of seletedReportTypeColumnData(); track $index) {
+                        <label
+                            class="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-all cursor-pointer"
+                            [for]="item.columnName">
+                            <input (click)="addColumnToTableData(item)" [checked]="isColumnChecked(item.id)"
+                                class="accent-blue-600 w-4 h-4 cursor-pointer" type="checkbox" [name]="item.columnName"
+                                [id]="item.columnName" />
+                            <span class="text-sm font-medium text-gray-700">{{ item.displayName }}</span>
+                        </label>
+                        }
+                    </div>
+                    } @else {
+                    <div class="text-center text-gray-500 py-6">
+                        <h1 class="text-base font-medium">Select a table to view columns</h1>
+                        <p class="text-sm text-gray-400 mt-1">Columns will appear here once a table is chosen.</p>
+                    </div>
+                    }
                 </div>
 
+
                 <!-- Right larger box -->
-                <div class="bg-amber-600 text-white rounded-lg p-4 shadow">
-                    <h1 class="text-lg font-semibold">Actutal table to show data</h1>
+                <div class="bg-black/40 text-white rounded-xl p-6 shadow-lg border-2 ">
+                    @if (actualColumnDataToshow() && actualColumnDataToshow().length > 0) {
+
+                    <!-- Header -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                        <h1 class="text-2xl font-bold">Table Data</h1>
+                        <button (click)="getData()"
+                            class="bg-white text-black font-semibold rounded-full py-2 px-4 shadow hover:bg-gray-200 transition">
+                            Get Data
+                        </button>
+                    </div>
+
+                    <!-- Table wrapper -->
+                    <div class="overflow-x-auto rounded-lg border border-white shadow-inner">
+                        <table class="w-full border-collapse text-black">
+                            <thead class="bg-white text-black uppercase text-sm tracking-wider">
+                                <tr>
+                                    @for (col of actualColumnDataToshow(); track $index) {
+                                    <th class="border px-4 py-2 text-left">{{ col.displayName }}</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                @for (row of selectColumnsData.rows; track $index) {
+                                <tr class="hover:bg-gray-200 transition">
+                                    @for (col of actualColumnDataToshow(); track $index) {
+                                    <td class="border px-4 py-2">{{ row[col.columnName] }}</td>
+                                    }
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    } @else {
+                    <h1 class="text-center text-xl font-semibold py-6">Nothing available</h1>
+                    }
                 </div>
+
+
+
 
             </div>
         </section>

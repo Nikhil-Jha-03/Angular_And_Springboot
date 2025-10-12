@@ -27,7 +27,7 @@ public class ReportImplementation implements ReportService {
 
     @Override
     public ReportResponseDTO getColumnData(ReportRequestDTO reportRequestDTO, Long reportTypeId) {
-
+        System.out.println("reportRequestDTO");
         try {
             // 1. Get Report Type
             ReportType reportType = reportTypeRepository.findById(reportTypeId)
@@ -74,7 +74,7 @@ public class ReportImplementation implements ReportService {
             return reportResponseDTO;
 
         } catch (HandlevariousErrors e) {
-            throw e; 
+            throw e;
         } catch (Exception e) {
             throw new HandlevariousErrors("Error generating report: " + e.getMessage());
         }
