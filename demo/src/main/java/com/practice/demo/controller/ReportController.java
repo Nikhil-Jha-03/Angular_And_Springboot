@@ -25,7 +25,9 @@ public class ReportController {
 
     @PostMapping("/data/{reportTypeId}")
     public ResponseEntity<ReportResponseDTO> postMethodName(@RequestBody ReportRequestDTO reportRequestDTO,
-            @PathVariable Long reportTypeId) {
+    @PathVariable Long reportTypeId) {
+                System.out.println("ReportRequestDTO");
+                    System.out.println(reportRequestDTO);
         // TODO: process POST request
 
         System.out.println("reportTypeId");

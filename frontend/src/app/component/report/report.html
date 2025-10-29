@@ -1,44 +1,121 @@
 <section class="w-7xl m-auto bg-zinc-900 p-5 rounded-2xl">
     <div>
-        <div class="flex items-center gap-2">
-            <label for="chooseTable" class="text-sm font-medium text-white ">
-                Choose Table:
-            </label>
+        <div class="flex items-center justify-between gap-2">
 
-            <select (change)="handleGetTableContent()" id="chooseTable" name="chooseTable" [(ngModel)]="selectedTypeId"
-                class="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold bg-white">
-                <option class="text-sm text-gray-500 " value={{0}} disabled selected>Select Type</option>
-                @if (reportTypeData().length > 0) {
-                @for (item of reportTypeData(); track item.id) {
-                <option [value]="item.id">{{ item.name }}</option>
-                }
-                } @else {
-                <option disabled selected>No data available</option>
-                }
-            </select>
+
+            <div>
+                <label for="chooseTable" class="text-sm font-medium text-white ">
+                    Choose Table:
+                </label>
+
+                <select (change)="loadColumns()" id="chooseTable" name="chooseTable" [(ngModel)]="selectedTypeId"
+                    class="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold bg-white">
+                    <option class="text-sm text-gray-500 " value={{0}} disabled selected>Select Type</option>
+                    @if (reportTypeData().length > 0) {
+                    @for (item of reportTypeData(); track item.id) {
+                    <option [value]="item.id">{{ item.name }}</option>
+                    }
+                    } @else {
+                    <option disabled selected>No data available</option>
+                    }
+                </select>
+            </div>
+
+
+            <div class="flex gap-2">
+                <input class="bg-white py-1 px-2 text-black rounded-lg placeholder:text-gray-600" type="text"
+                    placeholder="Enter report name">
+                <h1
+                    [ngClass]="tableData.rows.length === 0 ? 'bg-gray-600 text-black py-1 px-2 rounded-lg cursor-not-allowed' : 'bg-white text-black py-1 px-2 rounded-lg cursor-pointer'">
+                    Save Report
+                </h1>
+            </div>
+
         </div>
 
         <section class="mt-5">
-            <div class="grid grid-cols-[1fr_3fr] gap-4 w-full mx-auto">
-
-                <!-- Left small box -->
+            <div class="grid grid-cols-[1fr_3fr] gap-4 w-full mx-auto" cdkDropListGroup>
+                <!-- LEFT BOX -->
                 <div
-                    class="bg-white border-2 text-gray-800 rounded-xl shadow-md p-5 w-full max-w-md mx-auto  border-gray-200">
-                    @if (seletedReportTypeColumnData() && seletedReportTypeColumnData().length > 0) {
-                    <h2 class="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">Select Columns</h2>
+                    class="bg-white border-2 text-gray-800 rounded-xl shadow-md p-5 w-full max-w-md mx-auto border-gray-200">
+                    @if (availableColumns() && availableColumns().length > 0) {
 
-                    <div class="space-y-3 overflow-y-auto">
-                        @for (item of seletedReportTypeColumnData(); track $index) {
-                        <label
-                            class="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-all cursor-pointer"
-                            [for]="item.columnName">
-                            <input (click)="addColumnToTableData(item)" [checked]="isColumnChecked(item.id)"
-                                class="accent-blue-600 w-4 h-4 cursor-pointer" type="checkbox" [name]="item.columnName"
-                                [id]="item.columnName" />
-                            <span class="text-sm font-medium text-gray-700">{{ item.displayName }}</span>
-                        </label>
-                        }
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">Select Columns</h2>
+
+                        <div cdkDropList #availableList="cdkDropList" id="availableList"
+                            [cdkDropListData]="availableColumns()" [cdkDropListConnectedTo]="['selectedList']"
+                            (cdkDropListDropped)="onDrop($event)" class="space-y-3 overflow-y-auto">
+
+                            @for (item of availableColumns(); track $index) {
+                            <div cdkDrag
+                                class="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-all cursor-pointer">
+                                <input type="checkbox" class="accent-blue-600 w-4 h-4 cursor-pointer"
+                                    [checked]="isSelected(item.id)" (change)="toggleColumn(item)" />
+                                <span class="text-sm font-medium text-gray-700">{{ item.displayName }}</span>
+                            </div>
+                            }
+                        </div>
                     </div>
+
+
+                    <div class="">
+                        <div class="border-b pb-2 flex justify-between items-center mt-8">
+                            <h1 class="text-lg font-semibold text-gray-700">Filters</h1>
+                            <button (click)="addFilter()"
+                                class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition">
+                                Add Filter
+                            </button>
+                        </div>
+
+                        <div class="mt-4">
+
+
+                            <!-- filter -->
+                            @if (filters.length > 0) {
+
+                            @for (filter of filters; track filter.id; let i = $index) {
+                            <div class="flex items-center gap-2 mb-3">
+                                <select (change)="filterChange(i,'columnName',$event)"
+                                    class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                                    <option value="" disabled selected>Select</option>
+                                    @for (col of selectedColumns(); track col.columnName) {
+                                    <option [value]="col.columnName">{{ col.displayName }}</option>
+                                    }
+                                </select>
+
+                                <select (change)="filterChange(i,'operators',$event)"
+                                    class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                                    @for (item of filterData; track $index) {
+                                    <option value="{{item.value}}">{{item.value}}</option>
+                                    }
+                                </select>
+
+                                <input type="text" (change)="filterChange(i,'value',$event)"
+                                    class="px-2 py-1 border w-32 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold"
+                                    placeholder="Value" />
+
+                                <button (click)="removeFilter(i)"
+                                    class="text-red-600 hover:text-red-800 transition cursor-pointer font-bold">
+                                    X
+                                </button>
+                            </div>
+
+                            }
+                            <button
+                                class="bg-black text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 mt-4"
+                                (click)="getFilterReport()">Apply filter</button>
+                            } @else {
+                            <p class="text-sm text-gray-500">No filters added yet.</p>
+                            }
+
+                        </div>
+
+
+
+                    </div>
+
+
                     } @else {
                     <div class="text-center text-gray-500 py-6">
                         <h1 class="text-base font-medium">Select a table to view columns</h1>
@@ -47,34 +124,33 @@
                     }
                 </div>
 
+                <!-- RIGHT BOX -->
+                <div class="bg-gray-900 text-white rounded-xl p-6 shadow-lg border-2" cdkDropList
+                    #selectedList="cdkDropList" id="selectedList" [cdkDropListData]="selectedColumns()"
+                    [cdkDropListConnectedTo]="['availableList']" (cdkDropListDropped)="onDrop($event)">
 
-                <!-- Right larger box -->
-                <div class="bg-black/40 text-white rounded-xl p-6 shadow-lg border-2 ">
-                    @if (actualColumnDataToshow() && actualColumnDataToshow().length > 0) {
-
-                    <!-- Header -->
+                    @if (selectedColumns() && selectedColumns().length > 0) {
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
                         <h1 class="text-2xl font-bold">Table Data</h1>
-                        <button (click)="getData()"
+                        <button (click)="fetchData()"
                             class="bg-white text-black font-semibold rounded-full py-2 px-4 shadow hover:bg-gray-200 transition">
                             Get Data
                         </button>
                     </div>
 
-                    <!-- Table wrapper -->
                     <div class="overflow-x-auto rounded-lg border border-white shadow-inner">
                         <table class="w-full border-collapse text-black">
                             <thead class="bg-white text-black uppercase text-sm tracking-wider">
                                 <tr>
-                                    @for (col of actualColumnDataToshow(); track $index) {
-                                    <th class="border px-4 py-2 text-left">{{ col.displayName }}</th>
+                                    @for (col of selectedColumns(); track $index) {
+                                    <th cdkDrag class="border px-4 py-2 text-left">{{ col.displayName }}</th>
                                     }
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
-                                @for (row of selectColumnsData.rows; track $index) {
+                                @for (row of tableData.rows; track $index) {
                                 <tr class="hover:bg-gray-200 transition">
-                                    @for (col of actualColumnDataToshow(); track $index) {
+                                    @for (col of selectedColumns(); track $index) {
                                     <td class="border px-4 py-2">{{ row[col.columnName] }}</td>
                                     }
                                 </tr>
@@ -82,17 +158,13 @@
                             </tbody>
                         </table>
                     </div>
-
                     } @else {
                     <h1 class="text-center text-xl font-semibold py-6">Nothing available</h1>
                     }
                 </div>
-
-
-
-
             </div>
         </section>
+
 
     </div>
 </section>

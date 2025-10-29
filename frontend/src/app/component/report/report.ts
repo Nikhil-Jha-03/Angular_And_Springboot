@@ -1,111 +1,216 @@
-import { Component, DestroyRef, OnInit, signal } from '@angular/core';
-import { ReportTypeModel } from '../models/reportTypeModel';
-import { ReportService } from '../../services/reportService';
-import { FormsModule } from '@angular/forms';
-import { ReportColumnModel } from '../models/reportColumnModel';
-import { ReportRequestModel } from '../models/reportRequestModel';
-import { TableData } from '../models/TableDataModel';
+import {
+  Component,
+  DestroyRef,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import {
+  CdkDrag,
+  CdkDropList,
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+  DragDropModule
+} from '@angular/cdk/drag-drop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReportService } from '../../services/reportService';
+import { ReportTypeModel } from '../models/reportTypeModel';
+import { ReportColumnModel } from '../models/reportColumnModel';
+import { TableData } from '../models/TableDataModel';
+import { ReportRequestModel } from '../models/reportRequestModel';
+import { filterModel } from '../models/filterModel';
+import { ApplyFilter } from '../models/applyfilter';
+import { filterRequestReport } from '../models/filterReportRequest';
 
 @Component({
   selector: 'app-report',
-  imports: [FormsModule,CommonModule],
+  imports: [CommonModule, FormsModule, CdkDrag, CdkDropList, DragDropModule],
   templateUrl: './report.html',
   styleUrl: './report.css'
 })
-
 export class Report implements OnInit {
-
-  reportTypeData = signal<ReportTypeModel[]>([])
-  seletedReportType: number = 0;
-  selectedTableContent: string[] = [];
+  reportTypeData = signal<ReportTypeModel[]>([]);
   selectedTypeId: number = 0;
-  seletedReportTypeColumnData = signal<ReportColumnModel[]>([]);
-  actualColumnDataToshow = signal<any[]>([]);
-  selectedColumns: ReportRequestModel[] = [];
-  selectColumnsData: TableData = {
-    columns:[],
-    rows:[]
-  };
+  reportName: string = ''
 
-  constructor(private reportService: ReportService , private destroyRef : DestroyRef) { }
+  availableColumns = signal<ReportColumnModel[]>([]);
+  selectedColumns = signal<ReportColumnModel[]>([]);
+
+  tableData: TableData = { columns: [], rows: [] };
+
+  filters: ApplyFilter[] = [];
+  filterData: filterModel[] = [];
+  filterIdCounter = 0;
+
+  constructor(
+    private reportService: ReportService,
+    private destroyRef: DestroyRef
+  ) { }
 
   ngOnInit(): void {
-    this.getReportType()
+    this.filters = [];
+    this.loadReportTypes();
+    this.getFilters();
   }
 
-  getReportType() {
-    this.reportService.getAllReport().subscribe({
-      next: (res) => {
-        if (res) {
-          this.reportTypeData.set(res);
-        }
-      },
-      error: (error) => {
-        console.log("error")
-      }
-    })
+  private createEmptyFilter(): ApplyFilter {
+    return {
+      id: this.filterIdCounter++,
+      accountId: null,
+      columnName: '',
+      operators: '',
+      value: ''
+    };
   }
 
-  handleGetTableContent(): void {
-    this.selectedColumns = [];
-    this.actualColumnDataToshow.set([])
-    this.selectColumnsData.columns = []
-    this.selectColumnsData.rows = []
-    if (!this.selectedTypeId || isNaN(Number(this.selectedTypeId))) {
-      console.log("Select a valid type");
+  addFilter(): void {
+    this.filters = [...this.filters, this.createEmptyFilter()];
+    const data = this.selectedColumns().map(e => e.columnName)
+  }
+
+  filterChange(index: number, field: keyof ApplyFilter, event: any): void {
+    const value = event.target as HTMLSelectElement
+    const eventValue = value.value;
+
+    this.filters[index] = {
+      ...this.filters[index],
+      accountId: Number(this.selectedTypeId),
+      [field]: eventValue
+    }
+  }
+
+  removeFilter(deleteid: number): void {
+    if (deleteid >= 0) {
+      this.filters.splice(deleteid, 1)
+    }
+  }
+
+
+  getFilterReport(): void {
+    const validFilters = this.filters.filter(f =>
+      f.columnName && f.operators && f.value
+    );
+
+    const tableName = this.reportTypeData().filter(item => item.id == Number(this.selectedTypeId))[0].primaryObject
+    if (!tableName) {
+      alert('Please add at least one complete filter');
       return;
     }
 
-    const typeId = Number(this.selectedTypeId);
 
-    this.reportService.getColumnsOfType(typeId).subscribe({
-      next: (res: ReportColumnModel[]) => {
-        if (res) {
-          console.log("res", res)
-          this.seletedReportTypeColumnData.set(res)
+
+    if (validFilters.length === 0) {
+      alert('Please add at least one complete filter');
+      return;
+    }
+
+
+
+    const request: filterRequestReport = {
+      tableName: tableName,
+      selectedColumns: this.selectedColumns().map(e => e.columnName),
+      filters: validFilters
+    }
+
+    console.log(request)
+
+    this.reportService.getReportWithFilter(request).pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          console.log(res)
+        },
+        error: (error) => {
+          console.log(error)
         }
-      },
-      error: (error) => {
-        console.log("error", error)
-      }
-    })
+      })
   }
 
-  addColumnToTableData(data: any): void {
-    this.actualColumnDataToshow.update((current) => {
-      const exists = current.findIndex(item => item.id === data.id);
-
-      if (exists >= 0) {
-        return current.filter(item => item.id !== data.id);
-      } else {
-        return [...current, data];
-      }
+  loadReportTypes(): void {
+    this.reportService.getAllReport().subscribe({
+      next: (res) => this.reportTypeData.set(res || []),
+      error: () => console.error('Error fetching report types')
     });
   }
 
-  isColumnChecked(id: number): boolean {
-    return this.actualColumnDataToshow().some(item => item.id === id)
+  loadColumns(): void {
+    this.availableColumns.set([]);
+    this.selectedColumns.set([]);
+    this.tableData = { columns: [], rows: [] };
+
+    if (!this.selectedTypeId) return;
+
+    this.reportService.getColumnsOfType(this.selectedTypeId).subscribe({
+      next: (cols: ReportColumnModel[]) => this.availableColumns.set(cols || []),
+      error: (err) => console.error('Error loading columns', err)
+    });
   }
 
-  getData(): any {
-    this.actualColumnDataToshow().forEach(item => {
-      if (!this.selectedColumns.includes(item.columnName)) {
-        this.selectedColumns.push(item.columnName);
-      }
-    });
+  toggleColumn(col: ReportColumnModel): void {
+    const isSelected = this.isSelected(col.id);
+    if (isSelected) {
+      this.selectedColumns.update((list) => list.filter((c) => c.id !== col.id));
+    } else {
+      this.selectedColumns.update((list) => [...list, col]);
+    }
+  }
 
-    this.reportService.getReportData(this.selectedTypeId, this.selectedColumns)
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: (res:TableData) => {
-        this.selectColumnsData.columns =  res.columns
-        this.selectColumnsData.rows =  res.rows
+  isSelected(id: number): boolean {
+    return this.selectedColumns().some((c) => c.id === id);
+  }
+
+  fetchData(): void {
+    const columnNames = this.selectedColumns().map((c) => c.columnName);
+
+    // Wrap it in a single object matching ReportRequestModel
+    const requestBody: ReportRequestModel = {
+      selectedColumns: columnNames
+    };
+    if (!requestBody.selectedColumns.length) return;
+
+    this.reportService.getReportData(this.selectedTypeId, requestBody)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: TableData) => (this.tableData = res),
+        error: (err) => console.error('Error fetching data', err)
+      });
+  }
+
+  getFilters(): void {
+    this.reportService.getFilter().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res: filterModel[]) => {
+        res.forEach(item => this.filterData.push(item))
       },
-      error: (error) => {
-        console.log("Error Occured: ", error);
+      error: (err) => {
+        console.log(err)
       }
     })
+
+  }
+  onDrop(event: CdkDragDrop<ReportColumnModel[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      const draggedItem = event.previousContainer.data[event.previousIndex];
+      console.log(draggedItem)
+
+      // Prevent duplicates in target
+      const alreadyExists = event.container.data.some(
+        item => item.id === draggedItem.id
+      );
+
+      console.log(event)
+
+      if (event.container.connectedTo.toString() === 'selectedList') {
+        this.selectedColumns.update(list => list.filter(c => c.id !== draggedItem.id));
+      }
+
+      if (!alreadyExists) {
+        // Push a copy into the new container
+        event.container.data.splice(event.currentIndex, 0, { ...draggedItem });
+        // event.previousContainer.data.splice(event.previousIndex, 1);
+      }
+    }
   }
 }
