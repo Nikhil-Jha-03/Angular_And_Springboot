@@ -43,6 +43,7 @@ export class Report implements OnInit {
   filters: ApplyFilter[] = [];
   filterData: filterModel[] = [];
   filterIdCounter = 0;
+  showFilter: boolean = false;
 
   constructor(
     private reportService: ReportService,
@@ -88,25 +89,25 @@ export class Report implements OnInit {
   }
 
 
-  getFilterReport(): void {
+  getFilterReport(): any {
     const validFilters = this.filters.filter(f =>
-      f.columnName && f.operators && f.value
+      f.columnName?.trim() !== '' &&
+      f.operators?.trim() !== '' &&
+      f.value !== null &&
+      f.value !== undefined &&
+      f.value !== ''
     );
 
     const tableName = this.reportTypeData().filter(item => item.id == Number(this.selectedTypeId))[0].primaryObject
+
     if (!tableName) {
       alert('Please add at least one complete filter');
       return;
     }
-
-
-
     if (validFilters.length === 0) {
       alert('Please add at least one complete filter');
       return;
     }
-
-
 
     const request: filterRequestReport = {
       tableName: tableName,
@@ -118,13 +119,24 @@ export class Report implements OnInit {
 
     this.reportService.getReportWithFilter(request).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (res) => {
-          console.log(res)
+        next: (res: any) => {
+          this.showFilter = true;
+          console.log('Response:', res);
+
+          this.tableData.columns = this.selectedColumns();
+          this.tableData.rows = res;
+
+          console.log('Table Data:', this.tableData);
         },
         error: (error) => {
           console.log(error)
         }
       })
+  }
+
+  toggleFilter():void{
+    this.showFilter = false
+    this.tableData.rows = []
   }
 
   loadReportTypes(): void {
@@ -188,6 +200,7 @@ export class Report implements OnInit {
     })
 
   }
+
   onDrop(event: CdkDragDrop<ReportColumnModel[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);

@@ -1,6 +1,7 @@
 package com.practice.demo.services.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +70,7 @@ public class FilterImplementation implements FilterService {
         }
 
         List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString(), params.toArray());
+        System.out.println(jdbcTemplate.queryForList(sql.toString(), params.toArray()));
         return result;
     }
 
@@ -101,7 +103,6 @@ public class FilterImplementation implements FilterService {
             case "ends with":
                 return column + " LIKE ?";
             case "not equals":
-            case "!=":
                 return column + " != ?";
             default:
                 return column + " = ?";

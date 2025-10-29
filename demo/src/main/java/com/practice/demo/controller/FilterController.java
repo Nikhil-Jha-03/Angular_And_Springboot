@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.practice.demo.dto.FilterDTO;
 import com.practice.demo.dto.ReportFilterDTO;
-import com.practice.demo.dto.ReportResponseDTO;
 import com.practice.demo.services.FilterService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,5 +44,4 @@ public class FilterController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
         }
     }
-    
 }
