@@ -23,6 +23,7 @@ import { ReportRequestModel } from '../models/reportRequestModel';
 import { filterModel } from '../models/filterModel';
 import { ApplyFilter } from '../models/applyfilter';
 import { filterRequestReport } from '../models/filterReportRequest';
+import { SaveReportModel } from '../models/saveReportModel';
 
 @Component({
   selector: 'app-report',
@@ -115,18 +116,12 @@ export class Report implements OnInit {
       filters: validFilters
     }
 
-    console.log(request)
-
     this.reportService.getReportWithFilter(request).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res: any) => {
           this.showFilter = true;
-          console.log('Response:', res);
-
           this.tableData.columns = this.selectedColumns();
           this.tableData.rows = res;
-
-          console.log('Table Data:', this.tableData);
         },
         error: (error) => {
           console.log(error)
@@ -134,7 +129,7 @@ export class Report implements OnInit {
       })
   }
 
-  toggleFilter():void{
+  toggleFilter(): void {
     this.showFilter = false
     this.tableData.rows = []
   }
@@ -206,14 +201,10 @@ export class Report implements OnInit {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       const draggedItem = event.previousContainer.data[event.previousIndex];
-      console.log(draggedItem)
-
       // Prevent duplicates in target
       const alreadyExists = event.container.data.some(
         item => item.id === draggedItem.id
       );
-
-      console.log(event)
 
       if (event.container.connectedTo.toString() === 'selectedList') {
         this.selectedColumns.update(list => list.filter(c => c.id !== draggedItem.id));
@@ -226,4 +217,48 @@ export class Report implements OnInit {
       }
     }
   }
+
+
+  saveReport(): void {
+
+    const validFilters = this.filters.filter(f =>
+      f.columnName?.trim() !== '' &&
+      f.operators?.trim() !== '' &&
+      f.value !== null &&
+      f.value !== undefined &&
+      f.value !== ''
+    );
+
+    const tableName = this.reportTypeData().filter(item => item.id == Number(this.selectedTypeId))[0].primaryObject
+
+    if (!tableName) {
+      alert('Please add at least one complete filter');
+      return;
+    }
+    if (validFilters.length === 0) {
+      alert('Please add at least one complete filter');
+      return;
+    }
+
+    const data: SaveReportModel = {
+      reportName:  this.reportName,
+      tableName: tableName,
+      selectedCloumns: this.selectedColumns().map(e => e.columnName),
+      appliedfilter: validFilters
+    }
+
+
+    this.reportService.saveReport(data).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res) => {
+        console.log(res)
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+
+    console.log(data)
+
+  }
+
 }

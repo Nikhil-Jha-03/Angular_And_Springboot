@@ -5,12 +5,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.practice.demo.dto.FilterRequestDTO;
 import com.practice.demo.dto.ReportRequestDTO;
 import com.practice.demo.dto.ReportResponseDTO;
+import com.practice.demo.dto.ReportSave;
+import com.practice.demo.entity.ReportSaveEntity;
 import com.practice.demo.entity.ReportType;
+import com.practice.demo.payload.ApiResponse;
 import com.practice.demo.payload.HandlevariousErrors;
+import com.practice.demo.repository.ReportSaveRepository;
 import com.practice.demo.repository.ReportTypeRepository;
 import com.practice.demo.services.ReportService;
 
@@ -24,6 +32,8 @@ public class ReportImplementation implements ReportService {
 
     private final ReportTypeRepository reportTypeRepository;
     private final EntityManager entityManager;
+    private final ReportSaveRepository reportSaveRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public ReportResponseDTO getColumnData(ReportRequestDTO reportRequestDTO, Long reportTypeId) {
@@ -79,4 +89,30 @@ public class ReportImplementation implements ReportService {
             throw new HandlevariousErrors("Error generating report: " + e.getMessage());
         }
     }
+
+    @Override
+    public ApiResponse savereport(ReportSave dto) {
+
+        try {
+            List<String> selectedColumn = dto.getSelectedCloumns();
+            List<FilterRequestDTO> selectedFilter = dto.getAppliedfilter();
+            String selectedCloumnsJson = objectMapper.writeValueAsString(selectedColumn);
+            String selectedFilterJson = objectMapper.writeValueAsString(selectedFilter);
+
+            ReportSaveEntity entity = new ReportSaveEntity();
+            entity.setReportName(dto.getReportName());
+            entity.setTableName(dto.getTableName());
+            entity.setSelectedColumnsJson(selectedCloumnsJson);
+            entity.setAppliedFiltersJson(selectedFilterJson);
+
+            reportSaveRepository.save(entity);
+            return new ApiResponse(true,"Report saved Successfully");
+
+        } catch (JsonProcessingException e) {
+            return new ApiResponse(false,"Something went wrong");
+
+        }
+
+    }
+
 }
