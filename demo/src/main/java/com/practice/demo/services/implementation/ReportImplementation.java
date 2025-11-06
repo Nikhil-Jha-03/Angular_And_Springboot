@@ -5,10 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.demo.dto.FilterRequestDTO;
 import com.practice.demo.dto.ReportRequestDTO;
@@ -106,13 +106,45 @@ public class ReportImplementation implements ReportService {
             entity.setAppliedFiltersJson(selectedFilterJson);
 
             reportSaveRepository.save(entity);
-            return new ApiResponse(true,"Report saved Successfully");
+            return new ApiResponse(true, "Report saved Successfully");
 
         } catch (JsonProcessingException e) {
-            return new ApiResponse(false,"Something went wrong");
+            return new ApiResponse(false, "Something went wrong");
 
         }
 
     }
 
+    @Override
+    public List<ReportSave> getSavedReport() {
+        List<ReportSaveEntity> reportSavesEntities = reportSaveRepository.findAll();
+        List<ReportSave> reportSaves = reportSavesEntities.stream().map(item -> {
+            ReportSave dto = new ReportSave();
+            dto.setId(item.getId());
+            dto.setReportName(item.getReportName());
+            dto.setTableName(item.getTableName());
+            try {
+                dto.setSelectedCloumns(objectMapper.readValue(
+                        item.getSelectedColumnsJson(),
+                        new TypeReference<List<String>>() {
+                        }));
+
+                dto.setAppliedfilter(objectMapper.readValue(
+                        item.getAppliedFiltersJson(),
+                        new TypeReference<List<FilterRequestDTO>>() {
+                        }));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return dto;
+        }).toList();
+
+        System.out.println("reportSaves"+reportSaves);
+
+        return reportSaves;
+    }
+
 }
+
+
+// Use the data on the frontend 

@@ -250,7 +250,7 @@ export class Report implements OnInit {
 
     this.reportService.saveReport(data).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
-        console.log(res)
+        alert(`Report With Name: ${this.reportName} Saved`)
       },
       error: (err) => {
         console.log(err)

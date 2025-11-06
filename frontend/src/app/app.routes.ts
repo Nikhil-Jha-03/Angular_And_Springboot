@@ -3,6 +3,7 @@ import { Account } from './component/account/account';
 import { Contact } from './component/contact/contact';
 import { Opportunity } from './component/opportunity/opportunity';
 import { Report } from './component/report/report'
+import { SavedReports } from './component/saved-reports/saved-reports';
 
 export const routes: Routes = [
     {
@@ -21,4 +22,8 @@ export const routes: Routes = [
         path: 'report',
         component: Report
     },
+    {
+        path: 'savedreport',
+        component: SavedReports
+    }
 ];

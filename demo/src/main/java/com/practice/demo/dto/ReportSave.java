@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportSave {
+    private Long id;
     private String reportName;
     private String tableName;
     private List<String> selectedCloumns;

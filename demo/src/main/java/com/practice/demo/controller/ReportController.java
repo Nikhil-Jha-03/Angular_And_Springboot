@@ -10,11 +10,16 @@ import com.practice.demo.services.ReportService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -29,10 +34,7 @@ public class ReportController {
             @PathVariable Long reportTypeId) {
         System.out.println("ReportRequestDTO");
         System.out.println(reportRequestDTO);
-        // TODO: process POST request
 
-        System.out.println("reportTypeId");
-        System.out.println(reportTypeId);
         return ResponseEntity.ok().body(reportService.getColumnData(reportRequestDTO, reportTypeId));
     }
 
@@ -40,5 +42,14 @@ public class ReportController {
     public ResponseEntity<?> postMethodName(@RequestBody ReportSave dto) {
         return ResponseEntity.ok().body(reportService.savereport(dto));
     }
+
+
+
+    @GetMapping("/getsavereport")
+    public ResponseEntity<List<ReportSave>> getMethodName() {
+        System.out.println("reportSaves");
+        return ResponseEntity.ok().body(reportService.getSavedReport());
+    }
+    
 
 }

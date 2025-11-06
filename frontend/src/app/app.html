@@ -19,12 +19,15 @@
         <li class="hover:scale-110 hover:text-gray-400 transition-all">
           <a routerLink="/report">Report</a>
         </li>
+        <li>
+          <a routerLink="/savedreport" class="hover:text-gray-300">Saved Report</a>
+        </li>
       </ul>
     </section>
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow  sm:max-w-7xl m-auto text-white py-20 px-6">
+  <main class="flex-grow sm:max-w-7xl m-auto text-white py-20 px-6">
     <router-outlet></router-outlet>
   </main>
 
@@ -45,6 +48,7 @@
           <li><a routerLink="/services" class="hover:text-gray-300">Services</a></li>
           <li><a routerLink="/about" class="hover:text-gray-300">About</a></li>
           <li><a routerLink="/contact" class="hover:text-gray-300">Contact</a></li>
+          <li><a routerLink="/savedreport" class="hover:text-gray-300">Saved Report</a></li>
         </ul>
       </div>
 
