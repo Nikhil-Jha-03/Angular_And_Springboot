@@ -5,14 +5,27 @@
 
 
     <div class="text-2xl w-full  text-white p-6 bg-zinc-800 rounded-lg">
-        <div class="flex justify-between items-center">
-            <h1 class="mb-4 font-bold text-3xl">Accounts</h1>
-            <button
-                class="py-2 px-4 bg-white text-2xl text-black font-normal rounded-2xl cursor-pointer focus:active:scale-95 transition-al ">hey</button>
+
+        <div class="flex items-center gap-3">
+            @if (savedReportData.length > 0) {
+
+            <label class="text-white">Load Report:</label>
+
+            <select [(ngModel)]="selectedSaveReportId" class="border border-gray-300 rounded-md px-3 py-2 
+             focus:outline-none focus:ring-2 focus:ring-blue-500 
+             focus:border-blue-500 bg-white text-black text-sm">
+                <option value="null">Select Report</option>
+
+                @for (item of savedReportData; track item.id) {
+                <option [value]="item.id">{{ item.reportName }}</option>
+                }
+            </select>
+            }
         </div>
 
-        
-        
+
+
+
 
     </div>
 </section>

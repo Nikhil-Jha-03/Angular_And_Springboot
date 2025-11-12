@@ -8,6 +8,7 @@ import { TableData } from "../component/models/TableDataModel";
 import { filterModel } from "../component/models/filterModel";
 import { filterRequestReport } from "../component/models/filterReportRequest";
 import { SaveReportModel } from "../component/models/saveReportModel";
+import { GetSavedReportModel } from "../component/models/getSaveReportModel";
 
 @Injectable({
     providedIn: 'root'
@@ -42,5 +43,10 @@ export class ReportService {
     saveReport(data:SaveReportModel):Observable<SaveReportModel>{
        return this.http.post<SaveReportModel>(`${this.baseUrl}/report/savereport`,data)
     }
+
+    getSavedReport():Observable<GetSavedReportModel[]>{
+        return this.http.get<GetSavedReportModel[]>(`${this.baseUrl}/report/getsavereport`)
+    }
+
 }
  
