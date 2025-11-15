@@ -23,12 +23,10 @@
 
 
             <div class="flex gap-2">
-                <input 
-                [(ngModel)]="reportName"
-                class="bg-white py-1 px-2 text-black rounded-lg placeholder:text-gray-600" type="text"
+                <input [(ngModel)]="reportName"
+                    class="bg-white py-1 px-2 text-black rounded-lg placeholder:text-gray-600" type="text"
                     placeholder="Enter report name">
-                    <button
-                    (click)="saveReport()"
+                <button (click)="saveReport()"
                     [ngClass]="tableData.rows.length === 0 ? 'bg-gray-600 text-black py-1 px-2 rounded-lg cursor-not-allowed' : 'bg-white text-black py-1 px-2 rounded-lg cursor-pointer'">
                     Save Report
                 </button>

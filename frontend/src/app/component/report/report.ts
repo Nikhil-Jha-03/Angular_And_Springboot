@@ -218,7 +218,6 @@ export class Report implements OnInit {
     }
   }
 
-
   saveReport(): void {
 
     const validFilters = this.filters.filter(f =>

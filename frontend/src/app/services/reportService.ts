@@ -9,6 +9,7 @@ import { filterModel } from "../component/models/filterModel";
 import { filterRequestReport } from "../component/models/filterReportRequest";
 import { SaveReportModel } from "../component/models/saveReportModel";
 import { GetSavedReportModel } from "../component/models/getSaveReportModel";
+import { ReportMetadata } from "../component/models/FinalMetaDataTypeModel";
 
 @Injectable({
     providedIn: 'root'
@@ -47,6 +48,14 @@ export class ReportService {
     getSavedReport():Observable<GetSavedReportModel[]>{
         return this.http.get<GetSavedReportModel[]>(`${this.baseUrl}/report/getsavereport`)
     }
+
+
+    // For the report type save
+
+    saveFinalReportType(body:ReportMetadata):Observable<ReportMetadata>{
+        return this.http.post<ReportMetadata>(`${this.baseUrl}/savefinalreport`,{body})
+    }
+
 
 }
  

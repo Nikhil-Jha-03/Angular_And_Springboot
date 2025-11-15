@@ -1,6 +1,5 @@
 package com.practice.demo.services.implementation;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,8 +7,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.practice.demo.dto.AccountDTO;
 import com.practice.demo.dto.FinalSaveDTO;
 import com.practice.demo.dto.ReportResponseDTO;
 import com.practice.demo.entity.Accounts;
@@ -17,11 +14,11 @@ import com.practice.demo.entity.Contacts;
 import com.practice.demo.entity.FinalReportSaveEntity;
 import com.practice.demo.entity.Opportunity;
 import com.practice.demo.entity.Section;
-import com.practice.demo.repository.AccountRepository;
-import com.practice.demo.repository.ContactRepository;
+// import com.practice.demo.repository.AccountRepository;
+// import com.practice.demo.repository.ContactRepository;
 import com.practice.demo.repository.FinalReportSaveWithMetaDataReporitory;
-import com.practice.demo.repository.OpportunityRepository;
-import com.practice.demo.repository.SectionRepository;
+// import com.practice.demo.repository.OpportunityRepository;
+// import com.practice.demo.repository.SectionRepository;
 import com.practice.demo.services.FinalSaveReportService;
 
 import jakarta.persistence.ManyToOne;
@@ -33,14 +30,16 @@ import lombok.RequiredArgsConstructor;
 public class FInalSaveImplementation implements FinalSaveReportService {
 
     private final FinalReportSaveWithMetaDataReporitory finalReportSaveWithMetaDataReporitory;
-    private final SectionRepository sectionRepository;
-    private final AccountRepository accountRepository;
-    private final ContactRepository contactRepository;
-    private final OpportunityRepository opportunityRepository;
-    private final ObjectMapper objectMapper;
+    // private final SectionRepository sectionRepository;
+    // private final AccountRepository accountRepository;
+    // private final ContactRepository contactRepository;
+    // private final OpportunityRepository opportunityRepository;
+    // private final ObjectMapper objectMapper;
 
     @Override
     public ReportResponseDTO savereport(FinalSaveDTO entity) {
+
+        System.out.println(entity);
 
         // Create FinalReportSaveEntity from DTO
         FinalReportSaveEntity finalReportSaveEntity = new FinalReportSaveEntity();
@@ -61,7 +60,7 @@ public class FInalSaveImplementation implements FinalSaveReportService {
             Section section = new Section();
             section.setName(entity.getPrimaryObject());
             section.setColumns(columns);
-            section.setFinalReportSaveEntity(finalReportSaveEntity); // 🔥 Important: sets report type ID
+            section.setFinalReportSaveEntity(finalReportSaveEntity);
             sections.add(section);
         }
 
@@ -72,7 +71,7 @@ public class FInalSaveImplementation implements FinalSaveReportService {
             Section section = new Section();
             section.setName(entity.getSecondaryObject());
             section.setColumns(columns);
-            section.setFinalReportSaveEntity(finalReportSaveEntity); // 🔥 Important
+            section.setFinalReportSaveEntity(finalReportSaveEntity);
             sections.add(section);
         }
 
@@ -83,7 +82,7 @@ public class FInalSaveImplementation implements FinalSaveReportService {
             Section section = new Section();
             section.setName(entity.getTertiaryObject());
             section.setColumns(columns);
-            section.setFinalReportSaveEntity(finalReportSaveEntity); // 🔥 Important
+            section.setFinalReportSaveEntity(finalReportSaveEntity);
 
             sections.add(section);
         }

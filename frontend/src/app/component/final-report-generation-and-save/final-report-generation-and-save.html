@@ -1,0 +1,327 @@
+<section class="bg-gray-200 p-6 rounded-2xl">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Report Type Configuration</h1>
+            <p class="text-gray-600 mt-1">Configure your report type metadata and object relationships</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <!-- Report Type Information Section -->
+            <div class="border-b border-gray-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Report Type Information</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Report Type Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Report Type Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" [(ngModel)]="reportMetadata.reportTypeName"
+                            class="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            placeholder="Enter report type name">
+                    </div>
+
+                    <!-- Report Type API Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Report Type API Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" [(ngModel)]="reportMetadata.apiName"
+                            class="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            placeholder="Enter API name (e.g., Account_Contact_Report)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Object Selection Section -->
+            <div class="border-b border-gray-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Object Relationships</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Primary Object -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Primary Object <span class="text-red-500">*</span>
+                        </label>
+
+                        @if (reportTypeData().length>0) {
+                        <select [(ngModel)]="reportMetadata.primaryObject" (change)="onObjectChange('primaryObject')"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
+
+                            <option value="">Select Object</option>
+                            @for (item of reportTypeData(); track $index) {
+                            <option [value]="item.primaryObject">{{ item.name }}</option>
+                            }
+                        </select>
+                        }
+
+                    </div>
+
+                    <!-- Secondary Object -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Secondary Object
+                        </label>
+                        @if (reportTypeData().length>0) {
+                        <select [(ngModel)]="reportMetadata.secondaryObject"
+                            (change)="onObjectChange('secondaryObject')"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
+
+                            <option value="">Select Object</option>
+                            @for (item of reportTypeData(); track $index) {
+                            <option [value]="item.primaryObject">{{ item.name }}</option>
+                            }
+                        </select>
+                        }
+                    </div>
+
+                    <!-- Tertiary Object -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Tertiary Object
+                        </label>
+                        @if (reportTypeData().length>0) {
+                        <select [(ngModel)]="reportMetadata.tertiaryObject" (change)="onObjectChange('tertiaryObject')"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
+
+                            <option value="">Select Object</option>
+                            @for (item of reportTypeData(); track $index) {
+                            <option [value]="item.primaryObject">{{ item.name }}</option>
+                            }
+                        </select>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Join Configuration Section -->
+            <div class="border-b border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900">Join Configuration</h2>
+                    <button (click)="addJoin()"
+                        class="px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 font-medium">
+                        + Add Join
+                    </button>
+                </div>
+
+                <!-- Join 1: Primary to Secondary -->
+
+
+
+                @if (reportMetadata.joins.length>0) {
+                @for (item of reportMetadata.joins; track item.id) {
+                <div class="border border-gray-200 rounded-lg p-4 mb-4 text-black">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-gray-900">Join {{item.id}}: </h3>
+                        <button (click)="removeJoin(item.id)"
+                            class="text-red-600 hover:text-red-700 text-sm">Remove</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                        <!-- From Object -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">From Object</label>
+
+                            @if (reportTypeData().length>0) {
+                            <select [(ngModel)]="item.fromObject"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
+
+
+                                <option value="">Select Field</option>
+                                @for (obj of reportTypeData(); track $index) {
+                                <option [value]="obj.primaryObject">{{ obj.name }}</option>
+                                }
+                            </select>
+                            }
+
+                        </div>
+
+                        <!-- From Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">From Field</label>
+                            <select [(ngModel)]="item.fromField"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+
+                                <option value="">Select Field</option>
+
+                                @for (field of getColumnsFor(item.fromObject); track $index) {
+                                <option [value]="field.columnName">
+                                    {{ field.displayName }}
+                                </option>
+                                }
+                            </select>
+
+                        </div>
+
+                        <!-- To Object -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">To Object</label>
+                            @if (reportTypeData().length>0) {
+                            <select [(ngModel)]="item.toObject"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
+
+                                <option value="">Select Field</option>
+
+
+                                @for (obj of reportTypeData(); track $index) {
+                                <option [value]="obj.primaryObject">{{ obj.name }}</option>
+                                }
+                            </select>
+                            }
+
+
+                        </div>
+
+                        <!-- To Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">To Field</label>
+                            <select [(ngModel)]="item.toField"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+
+                                <option value="">Select Field</option>
+
+                                @for (field of getColumnsFor(item.toObject); track $index) {
+                                <option [value]="field.columnName">
+                                    {{ field.displayName }}
+                                </option>
+                                }
+                            </select>
+
+
+
+                        </div>
+
+                    </div>
+
+                    <!-- Join Type -->
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Join Type</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="radio" [name]="'joinType' + item.id" value="INNER"
+                                    [(ngModel)]="item.joinType"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">INNER JOIN</span>
+                            </label>
+
+                            <label class="flex items-center">
+                                <input type="radio" [name]="'joinType' + item.id" value="LEFT"
+                                    [(ngModel)]="item.joinType"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">LEFT JOIN</span>
+                            </label>
+
+                            <label class="flex items-center">
+                                <input type="radio" [name]="'joinType' + item.id" value="RIGHT"
+                                    [(ngModel)]="item.joinType"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">RIGHT JOIN</span>
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+                }
+
+                }
+
+                <!-- Join 2: Secondary to Tertiary -->
+
+
+            </div>
+
+            <!-- Column Selection Section -->
+            <!-- Not needed -->
+            <!-- <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Available Columns</h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-gray-900 flex items-center">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                Primary Object Columns
+                            </h3>
+                        </div>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+
+                            @if (primayObjectColumn().length > 0) {
+                            @for (item of primayObjectColumn(); track $index) {
+                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" (change)="onColumnSelect($event, item, 'primary')"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
+                            </label>
+                            }
+                            }
+
+
+                        </div>
+                    </div>
+
+           
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-gray-900 flex items-center">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                Secondary Object Columns
+                            </h3>
+                        </div>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            @if (secondaryObjectColumn().length > 0) {
+                            @for (item of secondaryObjectColumn(); track $index) {
+                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" (change)="onColumnSelect($event, item, 'secondary')"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
+                            </label>
+                            }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-gray-900 flex items-center">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                                Tertiary Object Columns
+                            </h3>
+                        </div>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            @if (tertiaryObjectColumn().length > 0) {
+                            @for (item of tertiaryObjectColumn(); track $index) {
+                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" (change)="onColumnSelect($event, item, 'tertiary')"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
+                            </label>
+                            }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div> -->
+
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="bg-white px-6 py-4 flex justify-end space-x-3 rounded-b-lg border-t border-gray-200 rounded-xl">
+            <button
+                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 font-medium transition">
+                Cancel
+            </button>
+            <button (click)="saveReport()"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition">
+                Save Report Type
+            </button>
+        </div>
+    </div>
+
+</section>
