@@ -24,6 +24,7 @@ import { filterModel } from '../models/filterModel';
 import { ApplyFilter } from '../models/applyfilter';
 import { filterRequestReport } from '../models/filterReportRequest';
 import { SaveReportModel } from '../models/saveReportModel';
+import { ReportMetadata } from '../models/FinalMetaDataTypeModel';
 
 @Component({
   selector: 'app-report',
@@ -57,13 +58,35 @@ export class Report implements OnInit {
     this.getFilters();
   }
 
+  // Get Saved Report
+
+  getAllSavedReport():any{
+    this.reportService.getAllSavedReport().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next:(res: ReportMetadata[])=>{
+        console.log(res)
+      },
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+
+    return null;
+  }
+
+
+
+
+
+
+
   private createEmptyFilter(): ApplyFilter {
     return {
       id: this.filterIdCounter++,
       accountId: null,
       columnName: '',
       operators: '',
-      value: ''
+      value: '',
+      logicalOperator: "AND"
     };
   }
 
@@ -96,7 +119,10 @@ export class Report implements OnInit {
       f.operators?.trim() !== '' &&
       f.value !== null &&
       f.value !== undefined &&
-      f.value !== ''
+      f.value !== '' &&
+      f.logicalOperator === "AND" || 
+      f.logicalOperator === "OR"
+      
     );
 
     const tableName = this.reportTypeData().filter(item => item.id == Number(this.selectedTypeId))[0].primaryObject
@@ -115,6 +141,8 @@ export class Report implements OnInit {
       selectedColumns: this.selectedColumns().map(e => e.columnName),
       filters: validFilters
     }
+
+    console.log("request",request)
 
     this.reportService.getReportWithFilter(request).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

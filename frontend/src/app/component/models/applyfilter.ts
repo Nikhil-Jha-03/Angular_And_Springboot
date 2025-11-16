@@ -3,5 +3,6 @@ export interface ApplyFilter{
     accountId: number | null,
     columnName: string,
     operators: string,
-    value: string
+    value: string,
+    logicalOperator: 'AND' | 'OR'; 
 }

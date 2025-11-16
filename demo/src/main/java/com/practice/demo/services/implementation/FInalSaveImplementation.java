@@ -3,17 +3,24 @@ package com.practice.demo.services.implementation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.practice.demo.dto.FinalSaveDTO;
+import com.practice.demo.dto.JoinQueryDTO;
 import com.practice.demo.dto.ReportResponseDTO;
 import com.practice.demo.entity.Accounts;
 import com.practice.demo.entity.Contacts;
 import com.practice.demo.entity.FinalReportSaveEntity;
+import com.practice.demo.entity.JoinQueryEntity;
 import com.practice.demo.entity.Opportunity;
 import com.practice.demo.entity.Section;
+import com.practice.demo.payload.ApiResponse;
 // import com.practice.demo.repository.AccountRepository;
 // import com.practice.demo.repository.ContactRepository;
 import com.practice.demo.repository.FinalReportSaveWithMetaDataReporitory;
@@ -30,14 +37,10 @@ import lombok.RequiredArgsConstructor;
 public class FInalSaveImplementation implements FinalSaveReportService {
 
     private final FinalReportSaveWithMetaDataReporitory finalReportSaveWithMetaDataReporitory;
-    // private final SectionRepository sectionRepository;
-    // private final AccountRepository accountRepository;
-    // private final ContactRepository contactRepository;
-    // private final OpportunityRepository opportunityRepository;
-    // private final ObjectMapper objectMapper;
+    private final ModelMapper modelMapper;
 
     @Override
-    public ReportResponseDTO savereport(FinalSaveDTO entity) {
+    public ApiResponse savereport(FinalSaveDTO entity) {
 
         System.out.println(entity);
 
@@ -48,7 +51,20 @@ public class FInalSaveImplementation implements FinalSaveReportService {
         finalReportSaveEntity.setPrimaryObject(entity.getPrimaryObject());
         finalReportSaveEntity.setSecondaryObject(entity.getSecondaryObject());
         finalReportSaveEntity.setTertiaryObject(entity.getTertiaryObject());
-        finalReportSaveEntity.setJoinQuery(entity.getJoinQuery());
+
+        List<JoinQueryEntity> joinEntities = entity.getJoinQuery().stream()
+                .map(j -> {
+                    JoinQueryEntity newEntity = new JoinQueryEntity();
+                    newEntity.setId(j.getId());
+                    newEntity.setFromObject(j.getFromObject());
+                    newEntity.setFromField(j.getFromField());
+                    newEntity.setToObject(j.getToObject());
+                    newEntity.setToField(j.getToField());
+                    newEntity.setJoinType(j.getJoinType());
+                    newEntity.setFinalReportSaveEntity(finalReportSaveEntity); // link parent
+                    return newEntity;
+                })
+                .collect(Collectors.toList());
 
         // Create sections dynamically based on which objects are provided
         List<Section> sections = new ArrayList<>();
@@ -90,12 +106,14 @@ public class FInalSaveImplementation implements FinalSaveReportService {
         System.out.println("Section ::::::: " + sections);
         System.out.println("MAIN DATA ::::::: " + finalReportSaveEntity);
 
-        // Step 3: Link sections back to parent report
+        // Link sections and query back to parent report
+        finalReportSaveEntity.setJoinQuery(joinEntities);
         finalReportSaveEntity.setSections(sections);
 
-        // Step 4: Save (cascade saves sections automatically)
+        // Save (cascade saves sections automatically)
         finalReportSaveWithMetaDataReporitory.save(finalReportSaveEntity);
-        return null;
+        ApiResponse api = new ApiResponse(true, "Report saved");
+        return api;
     }
 
     private List<String> getColumnNamesByTableName(String tableName) {
@@ -115,5 +133,22 @@ public class FInalSaveImplementation implements FinalSaveReportService {
                         && !field.isAnnotationPresent(OneToMany.class))
                 .map(Field::getName)
                 .toList();
+    }
+
+    @Override
+    public List<FinalSaveDTO> getAllSavedReport() {
+        try {
+
+            List<FinalReportSaveEntity> finalReportSaveEntity = finalReportSaveWithMetaDataReporitory.findAll();
+
+            List<FinalSaveDTO> finalSaveDTOs = finalReportSaveEntity.stream()
+                    .map(item -> modelMapper.map(item, FinalSaveDTO.class)).toList();
+
+            return finalSaveDTOs;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 }

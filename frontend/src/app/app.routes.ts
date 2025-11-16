@@ -19,16 +19,16 @@ export const routes: Routes = [
         path: 'opportunity',
         component: Opportunity
     },
-    // {
-    //     path: 'report',
-    //     component: Report
-    // },
     {
         path: 'report',
-        component: FinalReportGenerationAndSave
+        component: Report
     },
     {
         path: 'savedreport',
-        component: SavedReports
-    }
+        component: FinalReportGenerationAndSave
+    },
+    // {
+    //     path: 'savedreport',
+    //     component: SavedReports
+    // }
 ];

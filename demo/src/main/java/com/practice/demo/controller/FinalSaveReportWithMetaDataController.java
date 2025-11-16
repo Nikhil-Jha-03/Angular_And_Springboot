@@ -1,5 +1,7 @@
 package com.practice.demo.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,11 +9,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.practice.demo.dto.FinalSaveDTO;
 import com.practice.demo.dto.ReportResponseDTO;
+import com.practice.demo.entity.ReportSaveEntity;
+import com.practice.demo.payload.ApiResponse;
 import com.practice.demo.services.FinalSaveReportService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -28,8 +35,13 @@ public class FinalSaveReportWithMetaDataController {
     }
 
     @PostMapping("/savefinalreport")
-    public ResponseEntity<ReportResponseDTO> saveReport(@RequestBody FinalSaveDTO entity) {
+    public ResponseEntity<ApiResponse> saveReport(@RequestBody FinalSaveDTO entity) {
         return ResponseEntity.ok().body(finalSaveReportService.savereport(entity));
     }
 
+    @GetMapping("/getAllSavedReport")
+    public ResponseEntity<List<FinalSaveDTO>> getAllSavedReport() {
+        return ResponseEntity.ok().body(finalSaveReportService.getAllSavedReport());
+    }
+    
 }

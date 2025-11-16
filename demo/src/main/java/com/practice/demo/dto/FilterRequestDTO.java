@@ -13,4 +13,5 @@ public class FilterRequestDTO {
     private String columnName;
     private String operators;
     private String value;
+    private String logicalOperator;
 }

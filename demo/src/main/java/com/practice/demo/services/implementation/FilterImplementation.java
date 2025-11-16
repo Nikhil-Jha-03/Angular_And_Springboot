@@ -39,6 +39,7 @@ public class FilterImplementation implements FilterService {
     @Override
     public List<Map<String, Object>> getFilteredReport(ReportFilterDTO entity) {
 
+        System.out.println("ENTITY: " + entity);
         StringBuilder sql = new StringBuilder("SELECT ");
 
         if (entity.getSelectedColumns().isEmpty()) {
@@ -52,20 +53,23 @@ public class FilterImplementation implements FilterService {
         sql.append(" FROM ").append(entity.getTableName());
 
         List<Object> params = new ArrayList<>();
-
         if (entity.getFilters() != null && !entity.getFilters().isEmpty()) {
+
             sql.append(" WHERE ");
 
-            List<String> condition = new ArrayList<>();
+            boolean first = true;
 
             for (FilterRequestDTO f : entity.getFilters()) {
-                String conditionsString = buildCondtion(f);
-                condition.add(conditionsString);
-                params.add(getParameterValue(f));
-                System.out.println(getParameterValue(f));
-            }
 
-            sql.append(String.join(" AND ", condition));
+                if (!first) {
+                    sql.append(" ").append(f.getLogicalOperator()).append(" ");
+                }
+
+                sql.append(buildCondtion(f)); // column + operator + ?
+                params.add(getParameterValue(f));
+
+                first = false;
+            }
         }
 
         List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString(), params.toArray());

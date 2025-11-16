@@ -6,24 +6,24 @@ import { ReportTypeModel } from '../models/reportTypeModel';
 import { __classPrivateFieldGet } from 'tslib';
 import { ReportColumnModel } from '../models/reportColumnModel';
 import { FormsModule } from '@angular/forms';
-import { CdkDropList } from "@angular/cdk/drag-drop";
+
 
 
 @Component({
   selector: 'app-final-report-generation-and-save',
-  imports: [FormsModule, CdkDropList],
+  imports: [FormsModule],
   templateUrl: './final-report-generation-and-save.html',
   styleUrl: './final-report-generation-and-save.css'
 })
 export class FinalReportGenerationAndSave implements OnInit {
 
   reportMetadata: ReportMetadata = {
-    reportTypeName: '',
+    name: '',
     apiName: '',
     primaryObject: '',
     secondaryObject: '',
     tertiaryObject: '',
-    joins: [
+    joinQuery: [
       {
         id: this.generateId(),
         fromObject: '',
@@ -32,12 +32,7 @@ export class FinalReportGenerationAndSave implements OnInit {
         toField: '',
         joinType: 'LEFT'
       }
-    ],
-    columns: {
-      primary: [],
-      secondary: [],
-      tertiary: []
-    }
+    ]
   };
 
   // store the table name  {id: 1, name: 'Account Report', primaryObject: 'accounts'}{id: 2, name: 'Contact Report', primaryObject: 'contact'}2{id: 3, name: 'Opportunity Report', primaryObject: 'opportunity'} 👇
@@ -107,24 +102,24 @@ export class FinalReportGenerationAndSave implements OnInit {
     alert("Select Column");
   }
 
-  onColumnSelect(event: Event, data: ReportColumnModel, objectType: 'primary' | 'secondary' | 'tertiary'): void {
-    const checked = (event.target as HTMLInputElement).checked;
+  // onColumnSelect(event: Event, data: ReportColumnModel, objectType: 'primary' | 'secondary' | 'tertiary'): void {
+  //   const checked = (event.target as HTMLInputElement).checked;
 
-    if (checked) {
-      return this.addColumn(data, objectType);
-    } else {
-      return this.removeColumn(data, objectType);
-    }
-  }
+  //   if (checked) {
+  //     return this.addColumn(data, objectType);
+  //   } else {
+  //     return this.removeColumn(data, objectType);
+  //   }
+  // }
 
-  addColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
-    this.reportMetadata.columns[type].push(data.columnName);
-  }
+  // addColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
+  //   this.reportMetadata.columns[type].push(data.columnName);
+  // }
 
-  removeColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
-    this.reportMetadata.columns[type] =
-      this.reportMetadata.columns[type].filter(col => col !== data.columnName);
-  }
+  // removeColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
+  //   this.reportMetadata.columns[type] =
+  //     this.reportMetadata.columns[type].filter(col => col !== data.columnName);
+  // }
 
   private generateId(): string {
     return 'join_' + Math.random().toString(36).substr(2, 9);
@@ -133,7 +128,7 @@ export class FinalReportGenerationAndSave implements OnInit {
   // Add new join
   addJoin(): void {
     console.log("first")
-    this.reportMetadata.joins.push({
+    this.reportMetadata.joinQuery.push({
       id: this.generateId(),
       fromObject: '',
       fromField: '',
@@ -144,7 +139,7 @@ export class FinalReportGenerationAndSave implements OnInit {
   }
   // Remove Join
   removeJoin(id: string): void {
-    this.reportMetadata.joins = this.reportMetadata.joins.filter(item => item.id !== id)
+    this.reportMetadata.joinQuery = this.reportMetadata.joinQuery.filter(item => item.id !== id)
   }
 
   // it is for the to get specific column in the join section 
@@ -166,7 +161,7 @@ export class FinalReportGenerationAndSave implements OnInit {
     this.reportService.saveFinalReportType(this.reportMetadata).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       {
         next: (res) => {
-          console.log(res)
+          alert("Report Created")
         },
         error: (error) => {
           console.log(error);
@@ -174,22 +169,5 @@ export class FinalReportGenerationAndSave implements OnInit {
       }
     )
   }
-
-
-
-
-
-
-  displayData(): void {
-    console.log(this.reportMetadata)
-    console.log(this.reportTypeData())
-    console.log(this.primayObjectColumn())
-    console.log(this.secondaryObjectColumn())
-    console.log(this.tertiaryObjectColumn())
-    console.log(this.tertiaryObjectId)
-    console.log(this.tertiaryObjectId)
-    console.log(this.tertiaryObjectId)
-  }
-
 
 }

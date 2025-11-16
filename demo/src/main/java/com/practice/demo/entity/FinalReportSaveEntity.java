@@ -1,5 +1,6 @@
 package com.practice.demo.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -41,9 +42,11 @@ public class FinalReportSaveEntity {
     @Column(name = "tertiary_object")
     private String tertiaryObject;
 
-    @Column(name = "join_query", columnDefinition = "TEXT")
-    private String joinQuery;
+    @Column(name = "join_query")
+    @OneToMany(mappedBy = "finalReportSaveEntity", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<JoinQueryEntity> joinQuery = new ArrayList<>();
 
     @OneToMany(mappedBy = "finalReportSaveEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Section> sections;
+
 }

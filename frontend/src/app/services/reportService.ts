@@ -53,7 +53,14 @@ export class ReportService {
     // For the report type save
 
     saveFinalReportType(body:ReportMetadata):Observable<ReportMetadata>{
-        return this.http.post<ReportMetadata>(`${this.baseUrl}/savefinalreport`,{body})
+        console.log(body)
+        return this.http.post<ReportMetadata>(`${this.baseUrl}/savefinalreport`,body)
+    }
+
+    // Get all saved Report
+
+    getAllSavedReport():Observable<ReportMetadata[]>{
+        return this.http.get<ReportMetadata[]>(`${this.baseUrl}/getAllSavedReport`)
     }
 
 
