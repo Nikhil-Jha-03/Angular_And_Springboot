@@ -1,39 +1,125 @@
-<section class="w-7xl m-auto bg-zinc-900 p-5 rounded-2xl">
+<section class="w-7xl mx-auto bg-zinc-900 p-6 rounded-2xl text-white">
+
+  <!-- REPORT TYPE DROPDOWN -->
+  <div class="flex flex-col gap-4">
+
     <div>
-        <div class="flex items-center justify-between gap-2">
+      <label for="chooseTable" class="text-sm font-medium">
+        Choose Report Type:
+      </label>
+
+      <select 
+        id="chooseTable"
+        name="chooseTable"
+        [(ngModel)]="finalSelectedTypeId"
+        (change)="loadSelectedData()"
+        class="px-2 py-1 text-sm border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      >
+        <option value="0" disabled selected>Select Type</option>
+
+        @if (finalReportTypeData.length > 0) {
+          @for (item of finalReportTypeData; track item.apiName) {
+            <option [value]="item.apiName">{{ item.name }}</option>
+          }
+        } @else {
+          <option disabled>No data available</option>
+        }
+      </select>
+    </div>
 
 
-            <div>
-                <label for="chooseTable" class="text-sm font-medium text-white ">
-                    Choose Table:
-                </label>
+    <!-- SELECTED REPORT DATA -->
+    @if (finalSelectData) {
 
-                <select (change)="loadColumns()" id="chooseTable" name="chooseTable" [(ngModel)]="selectedTypeId"
-                    class="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold bg-white">
-                    <option class="text-sm text-gray-500 " value={{0}} disabled selected>Select Type</option>
-                    @if (reportTypeData().length > 0) {
-                    @for (item of reportTypeData(); track item.id) {
-                    <option [value]="item.id">{{ item.name }}</option>
-                    }
-                    } @else {
-                    <option disabled selected>No data available</option>
-                    }
-                </select>
-            </div>
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- PRIMARY OBJECT -->
+        @if (finalSelectData.primaryObject?.trim() !== '') {
+          <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
+            <h2 class="text-xl font-bold mb-4 ">
+              Primary: {{ finalSelectData.primaryObject }}
+            </h2>
+
+            @for (item of finalSelectData.sections; track $index) {
+              @if (item.name === finalSelectData.primaryObject) {
+
+                @for (col of item.columns; track $index) {
+                  <label class="flex items-center gap-3 py-1">
+                    <input 
+                      type="checkbox"
+                      class="w-4 h-4 rounded border-gray-400"
+                      (change)="onColumnSelect(item.name, col, $event)"
+                    >
+                    <span>{{ col }}</span>
+                  </label>
+                }
+
+              }
+            }
+          </div>
+        }
+
+        <!-- SECONDARY OBJECT -->
+        @if (finalSelectData.secondaryObject?.trim() !== '') {
+          <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
+            <h2 class="text-xl font-bold mb-4 ">
+              Secondary: {{ finalSelectData.secondaryObject }}
+            </h2>
+
+            @for (item of finalSelectData.sections; track $index) {
+              @if (item.name === finalSelectData.secondaryObject) {
+
+                @for (col of item.columns; track $index) {
+                  <label class="flex items-center gap-3 py-1">
+                    <input 
+                      type="checkbox"
+                      class="w-4 h-4 rounded border-gray-400"
+                      (change)="onColumnSelect(item.name, col, $event)"
+                    >
+                    <span>{{ col }}</span>
+                  </label>
+                }
+
+              }
+            }
+          </div>
+        }
+
+        <!-- TERTIARY OBJECT -->
+        @if (finalSelectData.tertiaryObject?.trim() !== '') {
+          <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
+            <h2 class="text-xl font-bold mb-4">
+              Tertiary: {{ finalSelectData.tertiaryObject }}
+            </h2>
+
+            @for (item of finalSelectData.sections; track $index) {
+              @if (item.name === finalSelectData.tertiaryObject) {
+
+                @for (col of item.columns; track $index) {
+                  <label class="flex items-center gap-3 py-1">
+                    <input 
+                      type="checkbox"
+                      class="w-4 h-4 rounded border-gray-400"
+                      (change)="onColumnSelect(item.name, col, $event)"
+                    >
+                    <span>{{ col }}</span>
+                  </label>
+                }
+
+              }
+            }
+          </div>
+        }
+
+      </div>
+
+    }
+
+  </div>
 
 
-            <div class="flex gap-2">
-                <input [(ngModel)]="reportName"
-                    class="bg-white py-1 px-2 text-black rounded-lg placeholder:text-gray-600" type="text"
-                    placeholder="Enter report name">
-                <button (click)="saveReport()"
-                    [ngClass]="tableData.rows.length === 0 ? 'bg-gray-600 text-black py-1 px-2 rounded-lg cursor-not-allowed' : 'bg-white text-black py-1 px-2 rounded-lg cursor-pointer'">
-                    Save Report
-                </button>
-            </div>
 
-        </div>
-
+   <div>
         <section class="mt-5">
             <div class="grid grid-cols-[1fr_3fr] gap-4 w-full mx-auto" cdkDropListGroup>
                 <!-- LEFT BOX -->
@@ -82,11 +168,11 @@
 
                                 <div><!-- AND/OR Logical Operator -->
                                     @if (i !== 0) {
-                                        <select (change)="filterChange(i,'logicalOperator',$event)"
-                                            class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
-                                            <option value="AND">AND</option>
-                                            <option value="OR">OR</option>
-                                        </select>
+                                    <select (change)="filterChange(i,'logicalOperator',$event)"
+                                        class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                                        <option value="AND">AND</option>
+                                        <option value="OR">OR</option>
+                                    </select>
                                     }
                                 </div>
 
@@ -205,4 +291,11 @@
 
 
     </div>
+
+
+
+
+
+
+  
 </section>

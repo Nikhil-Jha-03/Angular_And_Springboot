@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.practice.demo.dto.FinalReportResponse;
 import com.practice.demo.dto.FinalSaveDTO;
 import com.practice.demo.dto.JoinQueryDTO;
 import com.practice.demo.dto.ReportResponseDTO;
@@ -136,14 +137,13 @@ public class FInalSaveImplementation implements FinalSaveReportService {
     }
 
     @Override
-    public List<FinalSaveDTO> getAllSavedReport() {
-        try {
+    public List<FinalReportResponse> getAllSavedReport() {
+         try {
 
             List<FinalReportSaveEntity> finalReportSaveEntity = finalReportSaveWithMetaDataReporitory.findAll();
 
-            List<FinalSaveDTO> finalSaveDTOs = finalReportSaveEntity.stream()
-                    .map(item -> modelMapper.map(item, FinalSaveDTO.class)).toList();
-
+            List<FinalReportResponse> finalSaveDTOs = finalReportSaveEntity.stream()
+                    .map(item -> modelMapper.map(item, FinalReportResponse.class)).toList();
             return finalSaveDTOs;
 
         } catch (Exception e) {

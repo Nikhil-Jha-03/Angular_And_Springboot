@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.practice.demo.dto.FinalReportResponse;
 import com.practice.demo.dto.FinalSaveDTO;
 import com.practice.demo.dto.ReportResponseDTO;
 import com.practice.demo.entity.ReportSaveEntity;
@@ -40,8 +41,7 @@ public class FinalSaveReportWithMetaDataController {
     }
 
     @GetMapping("/getAllSavedReport")
-    public ResponseEntity<List<FinalSaveDTO>> getAllSavedReport() {
+    public ResponseEntity<List<FinalReportResponse>> getAllSavedReport() {
         return ResponseEntity.ok().body(finalSaveReportService.getAllSavedReport());
-    }
-    
+    } 
 }

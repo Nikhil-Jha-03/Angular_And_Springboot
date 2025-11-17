@@ -10,6 +10,7 @@ import { filterRequestReport } from "../component/models/filterReportRequest";
 import { SaveReportModel } from "../component/models/saveReportModel";
 import { GetSavedReportModel } from "../component/models/getSaveReportModel";
 import { ReportMetadata } from "../component/models/FinalMetaDataTypeModel";
+import { FinalReportRequestModel } from "../component/models/FinalReportRequestModel";
 
 @Injectable({
     providedIn: 'root'
@@ -59,8 +60,8 @@ export class ReportService {
 
     // Get all saved Report
 
-    getAllSavedReport():Observable<ReportMetadata[]>{
-        return this.http.get<ReportMetadata[]>(`${this.baseUrl}/getAllSavedReport`)
+    getAllSavedReport():Observable<FinalReportRequestModel[]>{
+        return this.http.get<FinalReportRequestModel[]>(`${this.baseUrl}/getAllSavedReport`)
     }
 
 

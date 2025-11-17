@@ -25,6 +25,7 @@ import { ApplyFilter } from '../models/applyfilter';
 import { filterRequestReport } from '../models/filterReportRequest';
 import { SaveReportModel } from '../models/saveReportModel';
 import { ReportMetadata } from '../models/FinalMetaDataTypeModel';
+import { FinalReportRequestModel } from '../models/FinalReportRequestModel';
 
 @Component({
   selector: 'app-report',
@@ -47,31 +48,77 @@ export class Report implements OnInit {
   filterIdCounter = 0;
   showFilter: boolean = false;
 
+
+
+  // For final report
+  finalReportTypeData: FinalReportRequestModel[] = [];
+  finalSelectedTypeId: string = '';
+  finalSelectData: FinalReportRequestModel = {
+    name: "",
+    apiName: "",
+    primaryObject: "",
+    secondaryObject: "",
+    tertiaryObject: "",
+    joinQuery: [{
+      id: "",
+      fromObject: "",
+      fromField: "",
+      toObject: "",
+      toField: "",
+      joinType: "LEFT"
+    }],
+    sections: [{
+      name: "",
+      columns: [""]
+    }],
+  }
+
+
   constructor(
     private reportService: ReportService,
     private destroyRef: DestroyRef
   ) { }
 
   ngOnInit(): void {
+    this.getAllSavedReport()
     this.filters = [];
     this.loadReportTypes();
     this.getFilters();
   }
 
   // Get Saved Report
-
-  getAllSavedReport():any{
+  getAllSavedReport(): any {
     this.reportService.getAllSavedReport().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next:(res: ReportMetadata[])=>{
-        console.log(res)
+      next: (res: FinalReportRequestModel[]) => {
+        this.finalReportTypeData = res;
       },
-      error:(error)=>{
+      error: (error) => {
         console.log(error)
       }
     })
 
     return null;
   }
+
+  // Select The report type and load the value into the variable
+  loadSelectedData(): any {
+
+    if (this.finalSelectedTypeId !== "" && this.finalSelectedTypeId.trim() !== "") {
+      this.finalSelectData = this.finalReportTypeData.find(
+        item => item.apiName === this.finalSelectedTypeId
+      ) || this.finalSelectData;
+    }
+    console.log(this.finalSelectData)
+  }
+
+  onColumnSelect(objectName: string, columnName: string, event: any) {
+  const checked = event.target.checked;
+  console.log(objectName, columnName, checked);
+
+  // You can store selected columns however you want:
+  // Example:
+  // this.selectedColumns.push({ objectName, columnName, checked });
+}
 
 
 
@@ -120,9 +167,9 @@ export class Report implements OnInit {
       f.value !== null &&
       f.value !== undefined &&
       f.value !== '' &&
-      f.logicalOperator === "AND" || 
+      f.logicalOperator === "AND" ||
       f.logicalOperator === "OR"
-      
+
     );
 
     const tableName = this.reportTypeData().filter(item => item.id == Number(this.selectedTypeId))[0].primaryObject
@@ -142,7 +189,7 @@ export class Report implements OnInit {
       filters: validFilters
     }
 
-    console.log("request",request)
+    console.log("request", request)
 
     this.reportService.getReportWithFilter(request).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -268,7 +315,7 @@ export class Report implements OnInit {
     }
 
     const data: SaveReportModel = {
-      reportName:  this.reportName,
+      reportName: this.reportName,
       tableName: tableName,
       selectedCloumns: this.selectedColumns().map(e => e.columnName),
       appliedfilter: validFilters
