@@ -8,21 +8,16 @@
         Choose Report Type:
       </label>
 
-      <select 
-        id="chooseTable"
-        name="chooseTable"
-        [(ngModel)]="finalSelectedTypeId"
-        (change)="loadSelectedData()"
-        class="px-2 py-1 text-sm border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
-      >
-        <option value="0" disabled selected>Select Type</option>
+      <select id="chooseTable" name="chooseTable" [(ngModel)]="finalSelectedTypeId" (change)="loadSelectedData()"
+        class="px-2 py-1 text-sm border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <option value='null' disabled selected>Select Type</option>
 
         @if (finalReportTypeData.length > 0) {
-          @for (item of finalReportTypeData; track item.apiName) {
-            <option [value]="item.apiName">{{ item.name }}</option>
-          }
+        @for (item of finalReportTypeData; track item.apiName) {
+        <option [value]="item.apiName">{{ item.name }}</option>
+        }
         } @else {
-          <option disabled>No data available</option>
+        <option disabled>No data available</option>
         }
       </select>
     </div>
@@ -31,87 +26,78 @@
     <!-- SELECTED REPORT DATA -->
     @if (finalSelectData) {
 
-      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        <!-- PRIMARY OBJECT -->
-        @if (finalSelectData.primaryObject?.trim() !== '') {
-          <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
-            <h2 class="text-xl font-bold mb-4 ">
-              Primary: {{ finalSelectData.primaryObject }}
-            </h2>
+      <!-- PRIMARY OBJECT -->
+      @if (finalSelectData.primaryObject?.trim() !== '') {
+      <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
+        <h2 class="text-xl font-bold mb-4 ">
+          Primary: {{ finalSelectData.primaryObject }}
+        </h2>
 
-            @for (item of finalSelectData.sections; track $index) {
-              @if (item.name === finalSelectData.primaryObject) {
+        @for (item of finalSelectData.sections; track $index) {
+        @if (item.name === finalSelectData.primaryObject) {
 
-                @for (col of item.columns; track $index) {
-                  <label class="flex items-center gap-3 py-1">
-                    <input 
-                      type="checkbox"
-                      class="w-4 h-4 rounded border-gray-400"
-                      (change)="onColumnSelect(item.name, col, $event)"
-                    >
-                    <span>{{ col }}</span>
-                  </label>
-                }
-
-              }
-            }
-          </div>
+        @for (col of item.columns; track $index) {
+        <label class="flex items-center gap-3 py-1">
+          <input type="checkbox" class="w-4 h-4 rounded border-gray-400"
+            (change)="onColumnSelect(item.name, col, $event)">
+          <span>{{ col }}</span>
+        </label>
         }
 
-        <!-- SECONDARY OBJECT -->
-        @if (finalSelectData.secondaryObject?.trim() !== '') {
-          <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
-            <h2 class="text-xl font-bold mb-4 ">
-              Secondary: {{ finalSelectData.secondaryObject }}
-            </h2>
-
-            @for (item of finalSelectData.sections; track $index) {
-              @if (item.name === finalSelectData.secondaryObject) {
-
-                @for (col of item.columns; track $index) {
-                  <label class="flex items-center gap-3 py-1">
-                    <input 
-                      type="checkbox"
-                      class="w-4 h-4 rounded border-gray-400"
-                      (change)="onColumnSelect(item.name, col, $event)"
-                    >
-                    <span>{{ col }}</span>
-                  </label>
-                }
-
-              }
-            }
-          </div>
         }
-
-        <!-- TERTIARY OBJECT -->
-        @if (finalSelectData.tertiaryObject?.trim() !== '') {
-          <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
-            <h2 class="text-xl font-bold mb-4">
-              Tertiary: {{ finalSelectData.tertiaryObject }}
-            </h2>
-
-            @for (item of finalSelectData.sections; track $index) {
-              @if (item.name === finalSelectData.tertiaryObject) {
-
-                @for (col of item.columns; track $index) {
-                  <label class="flex items-center gap-3 py-1">
-                    <input 
-                      type="checkbox"
-                      class="w-4 h-4 rounded border-gray-400"
-                      (change)="onColumnSelect(item.name, col, $event)"
-                    >
-                    <span>{{ col }}</span>
-                  </label>
-                }
-
-              }
-            }
-          </div>
         }
-
       </div>
+      }
+
+      <!-- SECONDARY OBJECT -->
+      @if (finalSelectData.secondaryObject?.trim() !== '') {
+      <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
+        <h2 class="text-xl font-bold mb-4 ">
+          Secondary: {{ finalSelectData.secondaryObject }}
+        </h2>
+
+        @for (item of finalSelectData.sections; track $index) {
+        @if (item.name === finalSelectData.secondaryObject) {
+
+        @for (col of item.columns; track $index) {
+        <label class="flex items-center gap-3 py-1">
+          <input type="checkbox" class="w-4 h-4 rounded border-gray-400"
+            (change)="onColumnSelect(item.name, col, $event)">
+          <span>{{ col }}</span>
+        </label>
+        }
+
+        }
+        }
+      </div>
+      }
+
+      <!-- TERTIARY OBJECT -->
+      @if (finalSelectData.tertiaryObject?.trim() !== '') {
+      <div class="bg-zinc-800 p-6 rounded-xl shadow-xl">
+        <h2 class="text-xl font-bold mb-4">
+          Tertiary: {{ finalSelectData.tertiaryObject }}
+        </h2>
+
+        @for (item of finalSelectData.sections; track $index) {
+        @if (item.name === finalSelectData.tertiaryObject) {
+
+        @for (col of item.columns; track $index) {
+        <label class="flex items-center gap-3 py-1">
+          <input type="checkbox" class="w-4 h-4 rounded border-gray-400"
+            (change)="onColumnSelect(item.name, col, $event)">
+          <span>{{ col }}</span>
+        </label>
+        }
+
+        }
+        }
+      </div>
+      }
+
+    </div>
 
     }
 
@@ -119,137 +105,138 @@
 
 
 
-   <div>
-        <section class="mt-5">
-            <div class="grid grid-cols-[1fr_3fr] gap-4 w-full mx-auto" cdkDropListGroup>
-                <!-- LEFT BOX -->
-                <div
-                    class="bg-white border-2 text-gray-800 rounded-xl shadow-md p-5 w-full max-w-md mx-auto border-gray-200">
-                    @if (availableColumns() && availableColumns().length > 0) {
+  <div>
+    <section class="mt-5">
+      <div class="grid grid-cols-[1fr_3fr] gap-4 w-full mx-auto" cdkDropListGroup>
+        <!-- LEFT BOX -->
+        <div class="bg-white border-2 text-gray-800 rounded-xl shadow-md p-5 w-full max-w-md mx-auto border-gray-200">
+          @if (availableColumns() && availableColumns().length > 0) {
 
-                    <div>
-                        <h2 class="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">Select Columns</h2>
+          <div>
+            <h2 class="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">Select Columns</h2>
 
-                        <div cdkDropList #availableList="cdkDropList" id="availableList"
-                            [cdkDropListData]="availableColumns()" [cdkDropListConnectedTo]="['selectedList']"
-                            (cdkDropListDropped)="onDrop($event)" class="space-y-3 overflow-y-auto">
+            <div cdkDropList #availableList="cdkDropList" id="availableList" [cdkDropListData]="availableColumns()"
+              [cdkDropListConnectedTo]="['selectedList']" (cdkDropListDropped)="onDrop($event)"
+              class="space-y-3 overflow-y-auto">
 
-                            @for (item of availableColumns(); track $index) {
-                            <div cdkDrag
-                                class="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-all cursor-pointer">
-                                <input type="checkbox" class="accent-blue-600 w-4 h-4 cursor-pointer"
-                                    [checked]="isSelected(item.id)" (change)="toggleColumn(item)" />
-                                <span class="text-sm font-medium text-gray-700">{{ item.displayName }}</span>
-                            </div>
-                            }
-                        </div>
-                    </div>
-
-
-                    <div class="">
-                        <div class="border-b pb-2 flex justify-between items-center mt-8">
-                            <h1 class="text-lg font-semibold text-gray-700">Filters</h1>
-                            <button (click)="addFilter()"
-                                class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition">
-                                Add Filter
-                            </button>
-                        </div>
-
-                        <div class="mt-4">
+              @for (item of availableColumns(); track $index) {
+              <div cdkDrag
+                class="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 transition-all cursor-pointer">
+                <input type="checkbox" class="accent-blue-600 w-4 h-4 cursor-pointer" [checked]="isSelected(item.id)"
+                  (change)="toggleColumn(item)" />
+                <span class="text-sm font-medium text-gray-700">{{ item.displayName }}</span>
+              </div>
+              }
+            </div>
+          </div>
 
 
-                            <!-- filter -->
-                            @if (filters.length > 0) {
+          <div class="">
+            <div class="border-b pb-2 flex justify-between items-center mt-8">
+              <h1 class="text-lg font-semibold text-gray-700">Filters</h1>
+              <button (click)="addFilter()"
+                class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition">
+                Add Filter
+              </button>
+            </div>
 
-                            @for (filter of filters; track filter.id; let i = $index) {
-                            <div class=" gap-2 mb-3">
+            <div class="mt-4">
 
 
+              <!-- filter -->
+              @if (filters.length > 0) {
 
-                                <div><!-- AND/OR Logical Operator -->
-                                    @if (i !== 0) {
-                                    <select (change)="filterChange(i,'logicalOperator',$event)"
-                                        class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
-                                        <option value="AND">AND</option>
-                                        <option value="OR">OR</option>
-                                    </select>
-                                    }
-                                </div>
-
-                                <div class="flex items-center">
-                                    <!-- Column Select -->
-                                    <select (change)="filterChange(i,'columnName',$event)"
-                                        class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
-                                        <option value="" disabled selected>Select</option>
-                                        @for (col of selectedColumns(); track col.columnName) {
-                                        <option [value]="col.columnName">{{ col.displayName }}</option>
-                                        }
-                                    </select>
-
-                                    <!-- Operator Select -->
-                                    <select (change)="filterChange(i,'operators',$event)"
-                                        class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
-                                        <option>Select Filter</option>
-                                        @for (item of filterData; track $index) {
-                                        <option value="{{item.value}}">{{item.value}}</option>
-                                        }
-                                    </select>
-
-                                    <!-- Value Input -->
-                                    <input type="text" (change)="filterChange(i,'value',$event)"
-                                        class="px-2 py-1 border w-32 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold"
-                                        placeholder="Value" />
+              @for (filter of filters; track filter.id; let i = $index) {
+              <div class=" gap-2 mb-3">
 
 
 
-                                    <!-- Delete Button -->
-                                    <button (click)="removeFilter(i)"
-                                        class="text-red-600 hover:text-red-800 transition cursor-pointer font-bold">
-                                        X
-                                    </button>
-                                </div>
-
-
-
-                            </div>
-                            }
-
-
-                            <div class="flex gap-5">
-                                <button
-                                    class="bg-black text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 mt-4"
-                                    (click)="getFilterReport()">Apply filter</button>
-
-                                <button (click)="toggleFilter()" [disabled]="!showFilter" [ngClass]="showFilter 
-    ? 'bg-red-900 text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 mt-4' 
-    : 'bg-gray-400 text-white py-2 px-4 rounded-lg cursor-not-allowed transition-all duration-300 mt-4'">
-                                    Remove Filter
-                                </button>
-                            </div>
-
-
-
-                            } @else {
-                            <p class="text-sm text-gray-500">No filters added yet.</p>
-                            }
-
-                        </div>
-
-
-
-                    </div>
-
-
-                    } @else {
-                    <div class="text-center text-gray-500 py-6">
-                        <h1 class="text-base font-medium">Select a table to view columns</h1>
-                        <p class="text-sm text-gray-400 mt-1">Columns will appear here once a table is chosen.</p>
-                    </div>
-                    }
+                <div><!-- AND/OR Logical Operator -->
+                  @if (i !== 0) {
+                  <select (change)="filterChange(i,'logicalOperator',$event)"
+                    class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                    <option value="AND">AND</option>
+                    <option value="OR">OR</option>
+                  </select>
+                  }
                 </div>
 
-                <!-- RIGHT BOX -->
-                <div class="bg-gray-900 text-white rounded-xl p-6 shadow-lg border-2" cdkDropList
+                <div class="flex items-center">
+                  <!-- Column Select -->
+                  <select (change)="filterChange(i,'columnName',$event)"
+                    class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                    <option value="" disabled selected>Select</option>
+                    @for (col of selectedColumns(); track col.columnName) {
+                    <option [value]="col.columnName">{{ col.displayName }}</option>
+                    }
+                  </select>
+
+                  <!-- Operator Select -->
+                  <select (change)="filterChange(i,'operators',$event)"
+                    class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold">
+                    <option>Select Filter</option>
+                    @for (item of filterData; track $index) {
+                    <option value="{{item.value}}">{{item.value}}</option>
+                    }
+                  </select>
+
+                  <!-- Value Input -->
+                  <input type="text" (change)="filterChange(i,'value',$event)"
+                    class="px-2 py-1 border w-32 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-500 font-semibold"
+                    placeholder="Value" />
+
+
+
+                  <!-- Delete Button -->
+                  <button (click)="removeFilter(i)"
+                    class="text-red-600 hover:text-red-800 transition cursor-pointer font-bold">
+                    X
+                  </button>
+                </div>
+
+
+
+              </div>
+              }
+
+
+              <div class="flex gap-5">
+                <button
+                  class="bg-black text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 mt-4"
+                  (click)="getFilterReport()">Apply filter</button>
+
+                <button (click)="toggleFilter()" [disabled]="!showFilter" [ngClass]="showFilter 
+    ? 'bg-red-900 text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 mt-4' 
+    : 'bg-gray-400 text-white py-2 px-4 rounded-lg cursor-not-allowed transition-all duration-300 mt-4'">
+                  Remove Filter
+                </button>
+              </div>
+
+
+
+              } @else {
+              <p class="text-sm text-gray-500">No filters added yet.</p>
+              }
+
+            </div>
+
+
+
+          </div>
+
+
+          } @else {
+          <div class="text-center text-gray-500 py-6">
+            <h1 class="text-base font-medium">Select a table to view columns</h1>
+            <p class="text-sm text-gray-400 mt-1">Columns will appear here once a table is chosen.</p>
+          </div>
+          }
+        </div>
+
+        <!-- RIGHT BOX -->
+
+
+        <!-- <div class="bg-gray-900 text-white rounded-xl p-6 shadow-lg border-2" cdkDropList
                     #selectedList="cdkDropList" id="selectedList" [cdkDropListData]="selectedColumns()"
                     [cdkDropListConnectedTo]="['availableList']" (cdkDropListDropped)="onDrop($event)">
 
@@ -285,17 +272,23 @@
                     } @else {
                     <h1 class="text-center text-xl font-semibold py-6">Nothing available</h1>
                     }
-                </div>
-            </div>
-        </section>
+                </div> -->
+
+        <div class="h-80 ag-theme-quartz w-full">
+          <ag-grid-angular [rowData]="rowData" [columnDefs]="colDefs" style="width: 100%; height: 100%;" />
+        </div>
 
 
-    </div>
+      </div>
+    </section>
+
+
+  </div>
 
 
 
 
 
 
-  
+
 </section>

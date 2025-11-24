@@ -47,6 +47,11 @@ export class FinalReportGenerationAndSave implements OnInit {
   tertiaryObjectColumn = signal<ReportColumnModel[]>([]);
 
 
+  showForm = false; // Add this property
+
+
+
+
   constructor(
     private reportService: ReportService,
     private destroyRef: DestroyRef
@@ -65,6 +70,17 @@ export class FinalReportGenerationAndSave implements OnInit {
       error: () => console.error('Error fetching report types')
     });
   }
+
+
+  toggleForm() {
+  this.showForm = !this.showForm;
+  
+  // Optionally reset the form when closing
+  if (!this.showForm) {
+    // Reset form data if needed
+    // this.resetForm();
+  }
+}
 
   private loadColumns(objectName: string, setter: (cols: ReportColumnModel[]) => void) {
     if (!objectName || objectName.trim() === '') return;

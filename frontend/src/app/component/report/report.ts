@@ -26,10 +26,15 @@ import { filterRequestReport } from '../models/filterReportRequest';
 import { SaveReportModel } from '../models/saveReportModel';
 import { ReportMetadata } from '../models/FinalMetaDataTypeModel';
 import { FinalReportRequestModel } from '../models/FinalReportRequestModel';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import type { ColDef } from 'ag-grid-community';
 
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-report',
-  imports: [CommonModule, FormsModule, CdkDrag, CdkDropList, DragDropModule],
+  imports: [CommonModule, FormsModule, CdkDrag, CdkDropList, DragDropModule, AgGridAngular],
   templateUrl: './report.html',
   styleUrl: './report.css'
 })
@@ -48,6 +53,8 @@ export class Report implements OnInit {
   filterIdCounter = 0;
   showFilter: boolean = false;
 
+
+  colDefs: ColDef[] = [];
 
 
   // For final report
@@ -72,6 +79,115 @@ export class Report implements OnInit {
       columns: [""]
     }],
   }
+
+  generateColDefs(report: any): ColDef[] {
+    const defs: ColDef[] = [];
+
+    report.sections.forEach((section: any) => {
+      section.columns.forEach((col: string) => {
+        const key = `${section.name}.${col}`;
+
+        defs.push({
+          headerName: `${section.name} ${col}`,
+          valueGetter: (params) => params.data[key],
+          sortable: true,
+          filter: true
+        });
+      });
+    });
+
+    return defs;
+  }
+  rowData = [
+  {
+    "accounts.id": 1,
+    "accounts.name": "ABC Corp",
+    "accounts.industry": "Tech",
+    "accounts.annualRevenue": 500000,
+
+    "contact.id": 12,
+    "contact.firstName": "John",
+    "contact.lastName": "Doe",
+    "contact.email": "john@example.com",
+
+    "opportunity.id": 20,
+    "opportunity.name": "Big Deal",
+    "opportunity.stage": "Closed Won",
+    "opportunity.amount": 45000,
+    "opportunity.closeDate": "2024-04-20"
+  },
+  {
+    "accounts.id": 2,
+    "accounts.name": "XYZ Industries",
+    "accounts.industry": "Manufacturing",
+    "accounts.annualRevenue": 900000,
+
+    "contact.id": 22,
+    "contact.firstName": "Priya",
+    "contact.lastName": "Sharma",
+    "contact.email": "priya@example.com",
+
+    "opportunity.id": 30,
+    "opportunity.name": "Machine Sale",
+    "opportunity.stage": "Negotiation",
+    "opportunity.amount": 120000,
+    "opportunity.closeDate": "2024-08-11"
+  },
+  {
+    "accounts.id": 3,
+    "accounts.name": "Digital Solutions",
+    "accounts.industry": "IT Services",
+    "accounts.annualRevenue": 250000,
+
+    "contact.id": 33,
+    "contact.firstName": "Rahul",
+    "contact.lastName": "Patil",
+    "contact.email": "rahul@example.com",
+
+    "opportunity.id": 40,
+    "opportunity.name": "Website Upgrade",
+    "opportunity.stage": "Prospecting",
+    "opportunity.amount": 15000,
+    "opportunity.closeDate": "2024-09-15"
+  },
+  {
+    "accounts.id": 4,
+    "accounts.name": "Fresh Mart",
+    "accounts.industry": "Retail",
+    "accounts.annualRevenue": 180000,
+
+    "contact.id": 44,
+    "contact.firstName": "Asha",
+    "contact.lastName": "Verma",
+    "contact.email": "asha@example.com",
+
+    "opportunity.id": 55,
+    "opportunity.name": "POS System",
+    "opportunity.stage": "Qualification",
+    "opportunity.amount": 25000,
+    "opportunity.closeDate": "2024-10-20"
+  },
+  {
+    "accounts.id": 5,
+    "accounts.name": "HealthCare Plus",
+    "accounts.industry": "Medical",
+    "accounts.annualRevenue": 750000,
+
+    "contact.id": 52,
+    "contact.firstName": "Karan",
+    "contact.lastName": "Mehta",
+    "contact.email": "karan@example.com",
+
+    "opportunity.id": 66,
+    "opportunity.name": "Equipment Lease",
+    "opportunity.stage": "Closed Lost",
+    "opportunity.amount": 95000,
+    "opportunity.closeDate": "2024-03-10"
+  }
+];
+
+
+
 
 
   constructor(
@@ -108,17 +224,20 @@ export class Report implements OnInit {
         item => item.apiName === this.finalSelectedTypeId
       ) || this.finalSelectData;
     }
-    console.log(this.finalSelectData)
+
+    this.colDefs = this.generateColDefs(this.finalSelectData);
+
+
   }
 
   onColumnSelect(objectName: string, columnName: string, event: any) {
-  const checked = event.target.checked;
-  console.log(objectName, columnName, checked);
+    const checked = event.target.checked;
+    console.log(objectName, columnName, checked);
 
-  // You can store selected columns however you want:
-  // Example:
-  // this.selectedColumns.push({ objectName, columnName, checked });
-}
+    // You can store selected columns however you want:
+    // Example:
+    // this.selectedColumns.push({ objectName, columnName, checked });
+  }
 
 
 

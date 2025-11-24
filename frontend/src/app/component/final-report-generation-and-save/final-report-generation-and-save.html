@@ -1,12 +1,24 @@
 <section class="bg-gray-200 p-6 rounded-2xl">
     <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-900">Report Type Configuration</h1>
-            <p class="text-gray-600 mt-1">Configure your report type metadata and object relationships</p>
+        <!-- Header with Create Button -->
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Report Type Configuration</h1>
+                <p class="text-gray-600 mt-1">Configure your report type metadata and object relationships</p>
+            </div>
+            <button (click)="toggleForm()"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition shadow-sm flex items-center gap-2">
+                @if (!showForm) {
+                <span>+ Create New Report Type</span>
+                }
+                @if (showForm) {
+                <span>✕ Close Form</span>
+                }
+            </button>
         </div>
 
-        <!-- Main Card -->
+        <!-- Main Card - Only shown when showForm is true -->
+        @if (showForm) {
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
             <!-- Report Type Information Section -->
             <div class="border-b border-gray-200 p-6">
@@ -106,10 +118,6 @@
                     </button>
                 </div>
 
-                <!-- Join 1: Primary to Secondary -->
-
-
-
                 @if (reportMetadata.joinQuery.length>0) {
                 @for (item of reportMetadata.joinQuery; track item.id) {
                 <div class="border border-gray-200 rounded-lg p-4 mb-4 text-black">
@@ -128,7 +136,6 @@
                             @if (reportTypeData().length>0) {
                             <select [(ngModel)]="item.fromObject"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
-
 
                                 <option value="">Select Field</option>
                                 @for (obj of reportTypeData(); track $index) {
@@ -165,13 +172,11 @@
 
                                 <option value="">Select Field</option>
 
-
                                 @for (obj of reportTypeData(); track $index) {
                                 <option [value]="obj.primaryObject">{{ obj.name }}</option>
                                 }
                             </select>
                             }
-
 
                         </div>
 
@@ -189,8 +194,6 @@
                                 </option>
                                 }
                             </select>
-
-
 
                         </div>
 
@@ -228,100 +231,33 @@
 
                 }
 
-                <!-- Join 2: Secondary to Tertiary -->
-
-
             </div>
 
-            <!-- Column Selection Section -->
-            <!-- Not needed -->
-            <!-- <div class="p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Available Columns</h2>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-semibold text-gray-900 flex items-center">
-                                <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                                Primary Object Columns
-                            </h3>
-                        </div>
-                        <div class="space-y-2 max-h-64 overflow-y-auto">
-
-                            @if (primayObjectColumn().length > 0) {
-                            @for (item of primayObjectColumn(); track $index) {
-                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                                <input type="checkbox" (change)="onColumnSelect($event, item, 'primary')"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
-                            </label>
-                            }
-                            }
-
-
-                        </div>
-                    </div>
-
-           
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-semibold text-gray-900 flex items-center">
-                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                                Secondary Object Columns
-                            </h3>
-                        </div>
-                        <div class="space-y-2 max-h-64 overflow-y-auto">
-                            @if (secondaryObjectColumn().length > 0) {
-                            @for (item of secondaryObjectColumn(); track $index) {
-                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                                <input type="checkbox" (change)="onColumnSelect($event, item, 'secondary')"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
-                            </label>
-                            }
-                            }
-                        </div>
-                    </div>
-
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-semibold text-gray-900 flex items-center">
-                                <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-                                Tertiary Object Columns
-                            </h3>
-                        </div>
-                        <div class="space-y-2 max-h-64 overflow-y-auto">
-                            @if (tertiaryObjectColumn().length > 0) {
-                            @for (item of tertiaryObjectColumn(); track $index) {
-                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                                <input type="checkbox" (change)="onColumnSelect($event, item, 'tertiary')"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
-                            </label>
-                            }
-                            }
-                        </div>
-                    </div>
-
-                </div>
-            </div> -->
-
-
+            <!-- Action Buttons -->
+            <div class="px-6 py-4 flex justify-end space-x-3">
+                <button (click)="toggleForm()"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 font-medium transition">
+                    Cancel
+                </button>
+                <button (click)="saveReport()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition">
+                    Save Report Type
+                </button>
+            </div>
         </div>
+        }
 
-        <!-- Action Buttons -->
-        <div class="bg-white px-6 py-4 flex justify-end space-x-3 rounded-b-lg border-t border-gray-200 rounded-xl">
-            <button
-                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 font-medium transition">
-                Cancel
-            </button>
-            <button (click)="saveReport()"
-                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition">
-                Save Report Type
-            </button>
+        <!-- Empty State - Shown when form is hidden -->
+        @if (!showForm) {
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div class="max-w-md mx-auto">
+                <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">No Report Type Configuration</h3>
+                <p class="text-gray-600 mb-6">Click the "Create New Report Type" button above to configure a new report type.</p>
+            </div>
         </div>
+    }
     </div>
-
 </section>
