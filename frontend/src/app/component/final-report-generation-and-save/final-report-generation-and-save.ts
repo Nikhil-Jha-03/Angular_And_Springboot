@@ -32,7 +32,12 @@ export class FinalReportGenerationAndSave implements OnInit {
         toField: '',
         joinType: 'LEFT'
       }
-    ]
+    ],
+    columns: {
+      primary: [],
+      secondary: [],
+      tertiary: []
+    }
   };
 
   // store the table name  {id: 1, name: 'Account Report', primaryObject: 'accounts'}{id: 2, name: 'Contact Report', primaryObject: 'contact'}2{id: 3, name: 'Opportunity Report', primaryObject: 'opportunity'} 👇
@@ -118,24 +123,24 @@ export class FinalReportGenerationAndSave implements OnInit {
     alert("Select Column");
   }
 
-  // onColumnSelect(event: Event, data: ReportColumnModel, objectType: 'primary' | 'secondary' | 'tertiary'): void {
-  //   const checked = (event.target as HTMLInputElement).checked;
+  onColumnSelect(event: Event, data: ReportColumnModel, objectType: 'primary' | 'secondary' | 'tertiary'): void {
+    const checked = (event.target as HTMLInputElement).checked;
 
-  //   if (checked) {
-  //     return this.addColumn(data, objectType);
-  //   } else {
-  //     return this.removeColumn(data, objectType);
-  //   }
-  // }
+    if (checked) {
+      return this.addColumn(data, objectType);
+    } else {
+      return this.removeColumn(data, objectType);
+    }
+  }
 
-  // addColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
-  //   this.reportMetadata.columns[type].push(data.columnName);
-  // }
+  addColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
+    this.reportMetadata.columns[type].push(data.columnName);
+  }
 
-  // removeColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
-  //   this.reportMetadata.columns[type] =
-  //     this.reportMetadata.columns[type].filter(col => col !== data.columnName);
-  // }
+  removeColumn(data: ReportColumnModel, type: 'primary' | 'secondary' | 'tertiary'): void {
+    this.reportMetadata.columns[type] =
+      this.reportMetadata.columns[type].filter(col => col !== data.columnName);
+  }
 
   private generateId(): string {
     return 'join_' + Math.random().toString(36).substr(2, 9);
@@ -174,6 +179,7 @@ export class FinalReportGenerationAndSave implements OnInit {
 
   saveReport(): void {
     console.log("ran")
+    console.log(this.reportMetadata)
     this.reportService.saveFinalReportType(this.reportMetadata).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       {
         next: (res) => {

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.practice.demo.dto.ColumnDTO;
 import com.practice.demo.dto.FinalReportResponse;
 import com.practice.demo.dto.FinalSaveDTO;
 import com.practice.demo.dto.JoinQueryDTO;
@@ -43,79 +44,70 @@ public class FInalSaveImplementation implements FinalSaveReportService {
     @Override
     public ApiResponse savereport(FinalSaveDTO entity) {
 
-        System.out.println(entity);
+    FinalReportSaveEntity finalReportSaveEntity = new FinalReportSaveEntity();
+    finalReportSaveEntity.setName(entity.getName());
+    finalReportSaveEntity.setApiName(entity.getApiName());
+    finalReportSaveEntity.setPrimaryObject(entity.getPrimaryObject());
+    finalReportSaveEntity.setSecondaryObject(entity.getSecondaryObject());
+    finalReportSaveEntity.setTertiaryObject(entity.getTertiaryObject());
 
-        // Create FinalReportSaveEntity from DTO
-        FinalReportSaveEntity finalReportSaveEntity = new FinalReportSaveEntity();
-        finalReportSaveEntity.setName(entity.getName());
-        finalReportSaveEntity.setApiName(entity.getApiName());
-        finalReportSaveEntity.setPrimaryObject(entity.getPrimaryObject());
-        finalReportSaveEntity.setSecondaryObject(entity.getSecondaryObject());
-        finalReportSaveEntity.setTertiaryObject(entity.getTertiaryObject());
+    // Convert join queries
+    List<JoinQueryEntity> joinEntities = entity.getJoinQuery().stream()
+            .map(j -> {
+                JoinQueryEntity newEntity = new JoinQueryEntity();
+                newEntity.setId(j.getId());
+                newEntity.setFromObject(j.getFromObject());
+                newEntity.setFromField(j.getFromField());
+                newEntity.setToObject(j.getToObject());
+                newEntity.setToField(j.getToField());
+                newEntity.setJoinType(j.getJoinType());
+                newEntity.setFinalReportSaveEntity(finalReportSaveEntity);
+                return newEntity;
+            })
+            .collect(Collectors.toList());
 
-        List<JoinQueryEntity> joinEntities = entity.getJoinQuery().stream()
-                .map(j -> {
-                    JoinQueryEntity newEntity = new JoinQueryEntity();
-                    newEntity.setId(j.getId());
-                    newEntity.setFromObject(j.getFromObject());
-                    newEntity.setFromField(j.getFromField());
-                    newEntity.setToObject(j.getToObject());
-                    newEntity.setToField(j.getToField());
-                    newEntity.setJoinType(j.getJoinType());
-                    newEntity.setFinalReportSaveEntity(finalReportSaveEntity); // link parent
-                    return newEntity;
-                })
-                .collect(Collectors.toList());
 
-        // Create sections dynamically based on which objects are provided
-        List<Section> sections = new ArrayList<>();
 
-        // --- Primary Object Section ---
-        if (entity.getPrimaryObject() != null && !entity.getPrimaryObject().isEmpty()) {
-            List<String> columns = getColumnNamesByTableName(entity.getPrimaryObject());
+    List<Section> sections = new ArrayList<>();
 
-            Section section = new Section();
-            section.setName(entity.getPrimaryObject());
-            section.setColumns(columns);
-            section.setFinalReportSaveEntity(finalReportSaveEntity);
-            sections.add(section);
-        }
+    ColumnDTO col = entity.getColumns();
 
-        // --- Secondary Object Section ---
-        if (entity.getSecondaryObject() != null && !entity.getSecondaryObject().isEmpty()) {
-            List<String> columns = getColumnNamesByTableName(entity.getSecondaryObject());
-
-            Section section = new Section();
-            section.setName(entity.getSecondaryObject());
-            section.setColumns(columns);
-            section.setFinalReportSaveEntity(finalReportSaveEntity);
-            sections.add(section);
-        }
-
-        // --- Tertiary Object Section ---
-        if (entity.getTertiaryObject() != null && !entity.getTertiaryObject().isEmpty()) {
-            List<String> columns = getColumnNamesByTableName(entity.getTertiaryObject());
-
-            Section section = new Section();
-            section.setName(entity.getTertiaryObject());
-            section.setColumns(columns);
-            section.setFinalReportSaveEntity(finalReportSaveEntity);
-
-            sections.add(section);
-        }
-
-        System.out.println("Section ::::::: " + sections);
-        System.out.println("MAIN DATA ::::::: " + finalReportSaveEntity);
-
-        // Link sections and query back to parent report
-        finalReportSaveEntity.setJoinQuery(joinEntities);
-        finalReportSaveEntity.setSections(sections);
-
-        // Save (cascade saves sections automatically)
-        finalReportSaveWithMetaDataReporitory.save(finalReportSaveEntity);
-        ApiResponse api = new ApiResponse(true, "Report saved");
-        return api;
+    // Primary
+    if (entity.getPrimaryObject() != null && !entity.getPrimaryObject().isEmpty()) {
+        Section section = new Section();
+        section.setName(entity.getPrimaryObject());
+        section.setColumns(col.getPrimary());   // USE CLIENT VALUES HERE
+        section.setFinalReportSaveEntity(finalReportSaveEntity);
+        sections.add(section);
     }
+
+    // Secondary
+    if (entity.getSecondaryObject() != null && !entity.getSecondaryObject().isEmpty()) {
+        Section section = new Section();
+        section.setName(entity.getSecondaryObject());
+        section.setColumns(col.getSecondary()); // USE CLIENT VALUES HERE
+        section.setFinalReportSaveEntity(finalReportSaveEntity);
+        sections.add(section);
+    }
+
+    // Tertiary
+    if (entity.getTertiaryObject() != null && !entity.getTertiaryObject().isEmpty()) {
+        Section section = new Section();
+        section.setName(entity.getTertiaryObject());
+        section.setColumns(col.getTertiary());  // USE CLIENT VALUES HERE
+        section.setFinalReportSaveEntity(finalReportSaveEntity);
+        sections.add(section);
+    }
+
+    // Set linked entities
+    finalReportSaveEntity.setJoinQuery(joinEntities);
+    finalReportSaveEntity.setSections(sections);
+
+    finalReportSaveWithMetaDataReporitory.save(finalReportSaveEntity);
+
+    return new ApiResponse(true, "Report saved");
+}
+
 
     private List<String> getColumnNamesByTableName(String tableName) {
         System.out.println("Getting columns for: " + tableName);

@@ -233,6 +233,86 @@
 
             </div>
 
+
+
+            <!-- Column Selection Section -->
+             <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Available Columns</h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-gray-900 flex items-center">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                Primary Object Columns
+                            </h3>
+                        </div>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+
+                            @if (primayObjectColumn().length > 0) {
+                            @for (item of primayObjectColumn(); track $index) {
+                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" (change)="onColumnSelect($event, item, 'primary')"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
+                            </label>
+                            }
+                            }
+
+
+                        </div>
+                    </div>
+
+           
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-gray-900 flex items-center">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                Secondary Object Columns
+                            </h3>
+                        </div>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            @if (secondaryObjectColumn().length > 0) {
+                            @for (item of secondaryObjectColumn(); track $index) {
+                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" (change)="onColumnSelect($event, item, 'secondary')"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
+                            </label>
+                            }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-gray-900 flex items-center">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                                Tertiary Object Columns
+                            </h3>
+                        </div>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            @if (tertiaryObjectColumn().length > 0) {
+                            @for (item of tertiaryObjectColumn(); track $index) {
+                            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" (change)="onColumnSelect($event, item, 'tertiary')"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">{{item.displayName}}</span>
+                            </label>
+                            }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div> 
+
+
+
+
+
             <!-- Action Buttons -->
             <div class="px-6 py-4 flex justify-end space-x-3">
                 <button (click)="toggleForm()"

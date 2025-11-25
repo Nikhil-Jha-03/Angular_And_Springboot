@@ -2,13 +2,6 @@ package com.practice.demo.dto;
 
 import java.util.List;
 
-import com.practice.demo.entity.JoinQueryEntity;
-import com.practice.demo.entity.Section;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +20,6 @@ public class FinalSaveDTO {
     private String secondaryObject;
     private String tertiaryObject;
     private List<JoinQueryDTO> joinQuery;
+    private ColumnDTO columns;
 
 }
