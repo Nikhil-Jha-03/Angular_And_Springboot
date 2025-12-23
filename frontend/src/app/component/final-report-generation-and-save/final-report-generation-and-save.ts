@@ -6,6 +6,7 @@ import { ReportTypeModel } from '../models/reportTypeModel';
 import { __classPrivateFieldGet } from 'tslib';
 import { ReportColumnModel } from '../models/reportColumnModel';
 import { FormsModule } from '@angular/forms';
+import { FinalReportRequestModel } from '../models/FinalReportRequestModel';
 
 
 
@@ -57,6 +58,28 @@ export class FinalReportGenerationAndSave implements OnInit {
 
 
 
+  finalSelectedTypeId: string = '';
+  finalReportTypeData: FinalReportRequestModel[] = [];
+  finalSelectData: FinalReportRequestModel = {
+    name: "",
+    apiName: "",
+    primaryObject: "",
+    secondaryObject: "",
+    tertiaryObject: "",
+    joinQuery: [{
+      id: "",
+      fromObject: "",
+      fromField: "",
+      toObject: "",
+      toField: "",
+      joinType: "LEFT"
+    }],
+    sections: [{
+      name: "",
+      columns: [""]
+    }],
+  }
+
   constructor(
     private reportService: ReportService,
     private destroyRef: DestroyRef
@@ -64,8 +87,78 @@ export class FinalReportGenerationAndSave implements OnInit {
 
   ngOnInit(): void {
     this.loadReportTypes();
+    this.getAllSavedReport();
   }
 
+
+
+  // for editing the report
+
+
+  // Get Saved Report
+  getAllSavedReport(): any {
+    this.reportService.getAllSavedReport().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res: FinalReportRequestModel[]) => {
+        this.finalReportTypeData = res;
+      },
+      error: (error) => {
+        console.log(error)
+      }
+    })
+
+    return null;
+  }
+
+  loadSelectedData(): any {
+
+    if (this.finalSelectedTypeId !== "" && this.finalSelectedTypeId.trim() !== "") {
+      this.finalSelectData = this.finalReportTypeData.find(
+        item => item.apiName === this.finalSelectedTypeId
+      ) || this.finalSelectData;
+    }
+  }
+
+
+
+editAddJoin() {
+  this.finalSelectData.joinQuery?.push({
+    id: crypto.randomUUID(),
+    fromObject: '',
+    fromField: '',
+    toObject: '',
+    toField: '',
+    joinType: 'LEFT'
+  });
+}
+
+editRemoveJoin(index: number) {
+  this.finalSelectData.joinQuery?.splice(index, 1);
+}
+
+editAddSection() {
+  this.finalSelectData.sections?.push({
+    name: '',
+    columns: ['']
+  });
+}
+
+editAddColumn(section: any) {
+  section.columns.push('');
+}
+
+editRemoveColumn(section: any, index: number) {
+  section.columns.splice(index, 1);
+}
+
+editSave() {
+  console.log('Final Payload:', this.finalSelectData);
+  // API call here
+}
+
+
+
+
+  // For creating the report
   loadReportTypes(): void {
     this.reportService.getAllReport().subscribe({
       next: (res) => {
@@ -76,17 +169,15 @@ export class FinalReportGenerationAndSave implements OnInit {
     });
   }
 
-
   toggleForm() {
-  this.showForm = !this.showForm;
-  
-  // Optionally reset the form when closing
-  if (!this.showForm) {
-    // Reset form data if needed
-    // this.resetForm();
-  }
-}
+    this.showForm = !this.showForm;
 
+    // Optionally reset the form when closing
+    if (!this.showForm) {
+      // Reset form data if needed
+      // this.resetForm();
+    }
+  }
   private loadColumns(objectName: string, setter: (cols: ReportColumnModel[]) => void) {
     if (!objectName || objectName.trim() === '') return;
 
@@ -191,5 +282,8 @@ export class FinalReportGenerationAndSave implements OnInit {
       }
     )
   }
+
+
+
 
 }

@@ -1,5 +1,5 @@
 <section class="bg-gray-200 p-6 rounded-2xl">
-    <div class="max-w-7xl mx-auto">
+    <div>
         <!-- Header with Create Button -->
         <div class="mb-6 flex items-center justify-between">
             <div>
@@ -236,12 +236,12 @@
 
 
             <!-- Column Selection Section -->
-             <div class="p-6">
+            <div class="p-6">
                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Available Columns</h2>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                
+
                     <div class="border border-gray-200 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-semibold text-gray-900 flex items-center">
@@ -265,7 +265,7 @@
                         </div>
                     </div>
 
-           
+
                     <div class="border border-gray-200 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-semibold text-gray-900 flex items-center">
@@ -307,7 +307,7 @@
                     </div>
 
                 </div>
-            </div> 
+            </div>
 
 
 
@@ -331,13 +331,302 @@
         @if (!showForm) {
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div class="max-w-md mx-auto">
-                <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">No Report Type Configuration</h3>
-                <p class="text-gray-600 mb-6">Click the "Create New Report Type" button above to configure a new report type.</p>
+                <p class="text-gray-600 mb-6">Click the "Create New Report Type" button above to configure a new report
+                    type.</p>
             </div>
         </div>
-    }
+        }
     </div>
+
+
+
+
+</section>
+
+
+
+<section class="bg-gray-200 p-6 rounded-2xl mt-10 text-black">
+    <!-- // this part is to edit the existing report type -->
+
+    <div>
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Edit Report Type</h1>
+            </div>
+        </div>
+
+        <div>
+            <label for="chooseTable" class="text-sm font-medium">
+                Choose Report Type:
+            </label>
+
+            <select id="chooseTable" name="chooseTable" [(ngModel)]="finalSelectedTypeId" (change)="loadSelectedData()"
+                class="px-2 py-1 text-sm border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option value='null' disabled selected>Select Type</option>
+
+                @if (finalReportTypeData.length > 0) {
+                @for (item of finalReportTypeData; track item.apiName) {
+                <option [value]="item.apiName">{{ item.name }}</option>
+                }
+                } @else {
+                <option disabled>No data available</option>
+                }
+            </select>
+        </div>
+
+
+        <div>
+
+            <section class="bg-white min-h-screen">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- Header -->
+        <div class="mb-8 pb-6 border-b border-gray-200">
+            <h1 class="text-2xl font-semibold text-gray-900">Report Type Editor</h1>
+        </div>
+
+        <!-- Report Type Selector -->
+        <div class="mb-8">
+            <div class="flex items-center gap-4">
+                <label for="chooseTable" class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                    Report Type
+                </label>
+                <select id="chooseTable" 
+                        name="chooseTable" 
+                        [(ngModel)]="finalSelectedTypeId" 
+                        (change)="loadSelectedData()"
+                        class="flex-1 max-w-md px-3 py-2 text-sm border border-gray-300 rounded bg-white text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    <option value='null' disabled selected>Select Report Type</option>
+                    @if (finalReportTypeData.length > 0) {
+                        @for (item of finalReportTypeData; track item.apiName) {
+                            <option [value]="item.apiName">{{ item.name }}</option>
+                        }
+                    } @else {
+                        <option disabled>No data available</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Editor Content -->
+        @if (finalSelectData?.apiName) {
+            <div class="space-y-6">
+                
+                <!-- Details Section -->
+                <div class="bg-gray-50 rounded border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-white">
+                        <h2 class="text-base font-semibold text-gray-900">Details</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1.5">
+                                    Report Name
+                                </label>
+                                <input [(ngModel)]="finalSelectData.name" 
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1.5">
+                                    API Name
+                                </label>
+                                <input [(ngModel)]="finalSelectData.apiName" 
+                                       disabled 
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-gray-100 text-gray-500" />
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1.5">
+                                    Primary Object
+                                </label>
+                                <input [(ngModel)]="finalSelectData.primaryObject" 
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1.5">
+                                    Secondary Object
+                                </label>
+                                <input [(ngModel)]="finalSelectData.secondaryObject" 
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1.5">
+                                    Tertiary Object
+                                </label>
+                                <input [(ngModel)]="finalSelectData.tertiaryObject" 
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Join Queries Section -->
+                <div class="bg-gray-50 rounded border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between">
+                        <h2 class="text-base font-semibold text-gray-900">Join Queries</h2>
+                        <button (click)="editAddJoin()" 
+                                class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded border border-blue-600">
+                            + New Join
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        @if ((finalSelectData.joinQuery ?? []).length > 0) {
+                            <div class="space-y-3">
+                                @for (join of finalSelectData.joinQuery ?? []; track $index) {
+                                    <div class="bg-white border border-gray-200 rounded p-4">
+                                        <div class="flex items-start gap-4">
+                                            <div class="flex-1 grid grid-cols-5 gap-3">
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-600 mb-1">From Object</label>
+                                                    <input [(ngModel)]="join.fromObject" 
+                                                           class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-600 mb-1">From Field</label>
+                                                    <input [(ngModel)]="join.fromField" 
+                                                           class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-600 mb-1">To Object</label>
+                                                    <input [(ngModel)]="join.toObject" 
+                                                           class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-600 mb-1">To Field</label>
+                                                    <input [(ngModel)]="join.toField" 
+                                                           class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Join Type</label>
+                                                    <select [(ngModel)]="join.joinType" 
+                                                            class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white">
+                                                        <option value="INNER">INNER</option>
+                                                        <option value="LEFT">LEFT</option>
+                                                        <option value="RIGHT">RIGHT</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button (click)="editRemoveJoin($index)" 
+                                                    class="mt-6 text-gray-400 hover:text-red-600">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        } @else {
+                            <div class="text-center py-8 text-sm text-gray-500">
+                                No join queries defined
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Sections -->
+                <div class="bg-gray-50 rounded border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between">
+                        <h2 class="text-base font-semibold text-gray-900">Sections</h2>
+                        <button (click)="editAddSection()" 
+                                class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded border border-blue-600">
+                            + New Section
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        @if ((finalSelectData.sections ?? []).length > 0) {
+                            <div class="space-y-4">
+                                @for (section of finalSelectData.sections ?? []; track $index) {
+                                    <div class="bg-white border border-gray-200 rounded">
+                                        <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+                                            <input [(ngModel)]="section.name" 
+                                                   placeholder="Section Name"
+                                                   class="flex-1 px-2 py-1 text-sm font-medium border-0 focus:outline-none focus:ring-0" />
+                                            <button
+                                                    class="text-gray-400 hover:text-red-600 ml-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="p-4">
+                                            <div class="mb-3">
+                                                <label class="block text-xs font-medium text-gray-600 mb-2">Columns</label>
+                                                <div class="flex flex-wrap gap-2">
+                                                    @for (col of section.columns; track $index) {
+                                                        <div class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded text-sm">
+                                                            <span>{{ col }}</span>
+                                                            <button (click)="editRemoveColumn(section, $index)" 
+                                                                    class="text-blue-600 hover:text-red-600 ml-1">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-600 mb-1.5">Add Column</label>
+                                                <select
+                                                        class="w-full max-w-xs px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                                    <option value="">Select a column to add...</option>
+                                                    <option value="Name">Name</option>
+                                                    <option value="Email">Email</option>
+                                                    <option value="Phone">Phone</option>
+                                                    <option value="Company">Company</option>
+                                                    <option value="Title">Title</option>
+                                                    <option value="Status">Status</option>
+                                                    <option value="CreatedDate">Created Date</option>
+                                                    <option value="ModifiedDate">Modified Date</option>
+                                                    <option value="Owner">Owner</option>
+                                                    <option value="Amount">Amount</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        } @else {
+                            <div class="text-center py-8 text-sm text-gray-500">
+                                No sections defined
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-3 pt-4 pb-8">
+                    <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded border border-gray-300">
+                        Cancel
+                    </button>
+                    <button (click)="editSave()" 
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded border border-blue-600">
+                        Save
+                    </button>
+                </div>
+
+            </div>
+
+        } @else {
+            <div class="text-center py-16">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <p class="text-sm text-gray-500">Select a report type to edit</p>
+            </div>
+        }
+
+    </div>
+</section>
+            
+        </div>
+
+    </div>
+
+
 </section>
