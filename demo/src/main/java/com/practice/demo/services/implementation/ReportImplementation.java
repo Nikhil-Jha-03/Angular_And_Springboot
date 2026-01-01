@@ -145,6 +145,3 @@ public class ReportImplementation implements ReportService {
     }
 
 }
-
-
-// Use the data on the frontend 

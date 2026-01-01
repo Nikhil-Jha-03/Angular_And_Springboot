@@ -7,6 +7,7 @@ import { __classPrivateFieldGet } from 'tslib';
 import { ReportColumnModel } from '../models/reportColumnModel';
 import { FormsModule } from '@angular/forms';
 import { FinalReportRequestModel } from '../models/FinalReportRequestModel';
+import { CDK_DRAG_HANDLE } from '@angular/cdk/drag-drop';
 
 
 
@@ -116,44 +117,79 @@ export class FinalReportGenerationAndSave implements OnInit {
         item => item.apiName === this.finalSelectedTypeId
       ) || this.finalSelectData;
     }
+
+
+    this.loadColumnsForObject();
   }
 
 
 
-editAddJoin() {
-  this.finalSelectData.joinQuery?.push({
-    id: crypto.randomUUID(),
-    fromObject: '',
-    fromField: '',
-    toObject: '',
-    toField: '',
-    joinType: 'LEFT'
-  });
-}
+  editAddJoin() {
+    this.finalSelectData.joinQuery?.push({
+      id: crypto.randomUUID(),
+      fromObject: '',
+      fromField: '',
+      toObject: '',
+      toField: '',
+      joinType: 'LEFT'
+    });
+  }
 
-editRemoveJoin(index: number) {
-  this.finalSelectData.joinQuery?.splice(index, 1);
-}
+  editRemoveJoin(index: number) {
+    this.finalSelectData.joinQuery?.splice(index, 1);
+  }
 
-editAddSection() {
-  this.finalSelectData.sections?.push({
-    name: '',
-    columns: ['']
-  });
-}
+  // editAddSection() {
+  //   this.finalSelectData.sections?.push({
+  //     name: '',
+  //     columns: ['']
+  //   });
+  // }
 
-editAddColumn(section: any) {
-  section.columns.push('');
-}
+  editAddColumn(section: String, column: string) {
+    console.log(section)
+    const sectionObj = this.finalSelectData.sections?.find(s => s.name === section);
+    if (sectionObj && sectionObj.columns) {
+      sectionObj.columns.push(column);
+    }
+  }
 
-editRemoveColumn(section: any, index: number) {
-  section.columns.splice(index, 1);
-}
+  editRemoveColumn(section: any, index: number) {
+    section.columns.splice(index, 1);
+  }
 
-editSave() {
-  console.log('Final Payload:', this.finalSelectData);
-  // API call here
-}
+  editSave() {
+    console.log('Final Payload:', this.finalSelectData);
+    // API call here
+  }
+
+  loadColumnsForObject(): void {
+    this.loadNewColumns("accounts", cols => this.primayObjectColumn.set(cols),1);
+
+    this.loadNewColumns(
+      "opportunities",
+      cols => this.secondaryObjectColumn.set(cols),2
+    );
+
+    this.loadNewColumns(
+      "contacts",
+      cols => this.tertiaryObjectColumn.set(cols),3
+    );
+  }
+
+
+  getColumnsBySection(section: any): ReportColumnModel[] {
+    switch (section) {
+      case 'accounts':
+        return this.primayObjectColumn();
+      case 'contact':
+        return this.secondaryObjectColumn();
+      case 'opportunity':
+        return this.tertiaryObjectColumn();
+      default:
+        return [];
+    }
+  }
 
 
 
@@ -178,7 +214,9 @@ editSave() {
       // this.resetForm();
     }
   }
+
   private loadColumns(objectName: string, setter: (cols: ReportColumnModel[]) => void) {
+    console.log("Name",objectName)
     if (!objectName || objectName.trim() === '') return;
 
     const found = this.reportTypeData().find(
@@ -197,6 +235,27 @@ editSave() {
     }
   }
 
+  private loadNewColumns(objectName: string, setter: (cols: ReportColumnModel[]) => void,id: number) {
+    console.log("Name",objectName)
+    if (!objectName || objectName.trim() === '') return;
+
+    const found = this.reportTypeData().find(
+      item => item.primaryObject === objectName
+    );
+
+    if (id) {
+      this.reportService.getColumnsOfType(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (cols: ReportColumnModel[]) => {
+          console.log(cols)
+          setter(cols || [])
+        },
+        error: (err) => console.error('Error loading columns', err)
+      });
+    }
+  }
+
+
+
   onObjectChange(object: string): void {
 
     if (object === "primaryObject") {
@@ -213,6 +272,8 @@ editSave() {
 
     alert("Select Column");
   }
+
+
 
   onColumnSelect(event: Event, data: ReportColumnModel, objectType: 'primary' | 'secondary' | 'tertiary'): void {
     const checked = (event.target as HTMLInputElement).checked;
@@ -256,13 +317,13 @@ editSave() {
 
   // it is for the to get specific column in the join section 
   getColumnsFor(objectName: string): ReportColumnModel[] {
-    if (objectName === this.reportMetadata.primaryObject) {
+    if (objectName === this.finalSelectData.primaryObject) {
       return this.primayObjectColumn();
     }
-    if (objectName === this.reportMetadata.secondaryObject) {
+    if (objectName === this.finalSelectData.secondaryObject) {
       return this.secondaryObjectColumn();
     }
-    if (objectName === this.reportMetadata.tertiaryObject) {
+    if (objectName === this.finalSelectData.tertiaryObject) {
       return this.tertiaryObjectColumn();
     }
     return [];
@@ -287,3 +348,5 @@ editSave() {
 
 
 }
+
+// No duplicate columns in the section
