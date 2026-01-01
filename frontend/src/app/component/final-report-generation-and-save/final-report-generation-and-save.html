@@ -380,12 +380,10 @@
     <section class="bg-white min-h-screen">
         <div class="max-w-7xl mx-auto px-6 py-8">
 
-            <!-- Header -->
-            <div class="mb-8 pb-6 border-b border-gray-200">
+            <!-- <div class="mb-8 pb-6 border-b border-gray-200">
                 <h1 class="text-2xl font-semibold text-gray-900">Report Type Editor</h1>
             </div>
 
-            <!-- Report Type Selector -->
             <div class="mb-8">
                 <div class="flex items-center gap-4">
                     <label for="chooseTable" class="text-sm font-medium text-gray-700 whitespace-nowrap">
@@ -404,10 +402,10 @@
                         }
                     </select>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Editor Content -->
-            @if (finalSelectData?.apiName) {
+            @if (finalSelectData.apiName) {
             <div class="space-y-6">
 
                 <!-- Details Section -->
@@ -437,7 +435,7 @@
                                 <label class="block text-xs font-medium text-gray-600 mb-1.5">
                                     Primary Object
                                 </label>
-                              
+
 
                                 <select [(ngModel)]="finalSelectData.primaryObject"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
@@ -453,7 +451,7 @@
                                 <label class="block text-xs font-medium text-gray-600 mb-1.5">
                                     Secondary Object
                                 </label>
-                               <select [(ngModel)]="finalSelectData.secondaryObject"
+                                <select [(ngModel)]="finalSelectData.secondaryObject"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
 
                                     <option value="">Select Object</option>
@@ -499,26 +497,72 @@
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">From
                                                 Object</label>
-                                            <input [(ngModel)]="join.fromObject"
-                                                class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+
+                                            <select [(ngModel)]="join.fromObject"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
+
+                                                <option value="">Select Object</option>
+                                                @for (item of reportTypeData(); track $index) {
+                                                <option [value]="item.primaryObject">{{ item.name }}</option>
+                                                }
+                                            </select>
+
+
                                         </div>
+
+
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">From
                                                 Field</label>
-                                            <input [(ngModel)]="join.fromField"
-                                                class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                
+
+                                            <select [(ngModel)]="join.fromField"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+
+                                                <option value="">Select Field</option>
+
+                                                @for (field of getColumnsBySection(join.fromObject); track $index) {
+                                                <option [value]="field.columnName">
+                                                    {{ field.displayName }}
+                                                </option>
+                                                }
+                                            </select>
+
                                         </div>
+
+
+
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">To
                                                 Object</label>
-                                            <input [(ngModel)]="join.toObject"
-                                                class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+
+
+                                            <select [(ngModel)]="join.toObject"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none custom-select appearance-none text-black">
+
+                                                <option value="">Select Object</option>
+                                                @for (item of reportTypeData(); track $index) {
+                                                <option [value]="item.primaryObject">{{ item.name }}</option>
+                                                }
+                                            </select>
+
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">To
                                                 Field</label>
-                                            <input [(ngModel)]="join.toField"
-                                                class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+        
+                                                <select [(ngModel)]="join.toField"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+
+                                                <option value="">Select Field</option>
+
+                                                @for (field of getColumnsBySection(join.toObject); track $index) {
+                                                <option [value]="field.columnName">
+                                                    {{ field.displayName }}
+                                                </option>
+                                                }
+                                            </select>
+
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">Join
@@ -565,14 +609,14 @@
                             @for (section of finalSelectData.sections ?? []; track $index) {
                             <div class="bg-white border border-gray-200 rounded">
                                 <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-                                    <input [(ngModel)]="section.name" placeholder="Section Name"
+                                    <input disabled [(ngModel)]="section.name" placeholder="Section Name"
                                         class="flex-1 px-2 py-1 text-sm font-medium border-0 focus:outline-none focus:ring-0" />
-                                    <button class="text-gray-400 hover:text-red-600 ml-2">
+                                    <!-- <button class="text-gray-400 hover:text-red-600 ml-2">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M6 18L18 6M6 6l12 12" />
                                         </svg>
-                                    </button>
+                                    </button> -->
                                 </div>
                                 <div class="p-4">
                                     <div class="mb-3">
@@ -601,7 +645,7 @@
                                         <select #colInput
                                             (change)="editAddColumn(section.name, colInput.value); colInput.value=''"
                                             class="w-full max-w-xs px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                                             @for (obj of getColumnsBySection(section.name); track $index) {
+                                            @for (obj of getColumnsBySection(section.name); track $index) {
                                             <option [value]="obj.columnName">{{ obj.displayName }}</option>
                                             }
                                         </select>
@@ -624,7 +668,7 @@
                         class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded border border-gray-300">
                         Cancel
                     </button>
-                    <button (click)="editSave()"
+                    <button (click)="saveEditReport()"
                         class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded border border-blue-600">
                         Save
                     </button>

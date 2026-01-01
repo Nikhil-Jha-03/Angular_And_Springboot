@@ -57,13 +57,17 @@ export class ReportService {
         console.log(body)
         return this.http.post<ReportMetadata>(`${this.baseUrl}/savefinalreport`,body)
     }
-
+    
     // Get all saved Report
-
+    
     getAllSavedReport():Observable<FinalReportRequestModel[]>{
         return this.http.get<FinalReportRequestModel[]>(`${this.baseUrl}/getAllSavedReport`)
     }
-
+    
+    saveEditReportType(body:FinalReportRequestModel):Observable<FinalReportRequestModel>{
+        console.log("body in service",body)
+        return this.http.post<FinalReportRequestModel>(`${this.baseUrl}/saveEditReport`,body)
+    }
 
 }
  

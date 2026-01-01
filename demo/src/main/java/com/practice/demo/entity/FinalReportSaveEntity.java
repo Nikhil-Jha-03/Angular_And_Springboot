@@ -45,10 +45,10 @@ public class FinalReportSaveEntity {
     private String tertiaryObject;
 
     @Column(name = "join_query")
-    @OneToMany(mappedBy = "finalReportSaveEntity", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "finalReportSaveEntity", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<JoinQueryEntity> joinQuery = new ArrayList<>();
 
-    @OneToMany(mappedBy = "finalReportSaveEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "finalReportSaveEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Section> sections;
 
 }

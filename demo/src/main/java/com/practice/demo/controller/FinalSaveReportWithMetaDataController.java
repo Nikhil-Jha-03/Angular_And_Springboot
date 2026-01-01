@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.practice.demo.dto.EditExisitingReportDTO;
 import com.practice.demo.dto.FinalReportResponse;
 import com.practice.demo.dto.FinalSaveDTO;
 import com.practice.demo.dto.ReportResponseDTO;
@@ -44,4 +45,10 @@ public class FinalSaveReportWithMetaDataController {
     public ResponseEntity<List<FinalReportResponse>> getAllSavedReport() {
         return ResponseEntity.ok().body(finalSaveReportService.getAllSavedReport());
     } 
+
+    @PostMapping("/saveEditReport")
+    public ResponseEntity<?> postMethodNameForEditSave(@RequestBody EditExisitingReportDTO dto) {
+        System.out.println("reportSavesEdit" + dto.toString());
+        return ResponseEntity.ok().body(finalSaveReportService.reportSavesEdit(dto));
+    }
 }

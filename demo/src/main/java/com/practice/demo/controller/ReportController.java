@@ -3,6 +3,7 @@ package com.practice.demo.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.practice.demo.dto.FinalSaveDTO;
 import com.practice.demo.dto.ReportRequestDTO;
 import com.practice.demo.dto.ReportResponseDTO;
 import com.practice.demo.dto.ReportSave;
@@ -41,9 +42,9 @@ public class ReportController {
     public ResponseEntity<?> postMethodName(@RequestBody ReportSave dto) {
         return ResponseEntity.ok().body(reportService.savereport(dto));
     }
-
-
-
+    
+    
+    
     @GetMapping("/getsavereport")
     public ResponseEntity<List<ReportSave>> getMethodName() {
         System.out.println("reportSaves");
