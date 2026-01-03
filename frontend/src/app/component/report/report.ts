@@ -53,6 +53,8 @@ export class Report implements OnInit {
   filterIdCounter = 0;
   showFilter: boolean = false;
 
+  selectedColumnsForFinalReport: string[] = [];
+
 
   colDefs: ColDef[] = [];
 
@@ -80,113 +82,113 @@ export class Report implements OnInit {
     }],
   }
 
-  generateColDefs(report: any): ColDef[] {
-    const defs: ColDef[] = [];
+  // generateColDefs(report: any): ColDef[] {
+  //   const defs: ColDef[] = [];
 
-    report.sections.forEach((section: any) => {
-      section.columns.forEach((col: string) => {
-        const key = `${section.name}.${col}`;
+  //   report.sections.forEach((section: any) => {
+  //     section.columns.forEach((col: string) => {
+  //       const key = `${section.name}.${col}`;
 
-        defs.push({
-          headerName: `${section.name} ${col}`,
-          valueGetter: (params) => params.data[key],
-          sortable: true,
-          filter: true
-        });
-      });
-    });
+  //       defs.push({
+  //         headerName: `${section.name} ${col}`,
+  //         valueGetter: (params) => params.data[key],
+  //         sortable: true,
+  //         filter: true
+  //       });
+  //     });
+  //   });
 
-    return defs;
-  }
-  rowData = [
-  {
-    "accounts.id": 1,
-    "accounts.name": "ABC Corp",
-    "accounts.industry": "Tech",
-    "accounts.annualRevenue": 500000,
+  //   return defs;
+  // }
+  // rowData = [
+  //   {
+  //     "accounts.id": 1,
+  //     "accounts.name": "ABC Corp",
+  //     "accounts.industry": "Tech",
+  //     "accounts.annualRevenue": 500000,
 
-    "contact.id": 12,
-    "contact.firstName": "John",
-    "contact.lastName": "Doe",
-    "contact.email": "john@example.com",
+  //     "contact.id": 12,
+  //     "contact.firstName": "John",
+  //     "contact.lastName": "Doe",
+  //     "contact.email": "john@example.com",
 
-    "opportunity.id": 20,
-    "opportunity.name": "Big Deal",
-    "opportunity.stage": "Closed Won",
-    "opportunity.amount": 45000,
-    "opportunity.closeDate": "2024-04-20"
-  },
-  {
-    "accounts.id": 2,
-    "accounts.name": "XYZ Industries",
-    "accounts.industry": "Manufacturing",
-    "accounts.annualRevenue": 900000,
+  //     "opportunity.id": 20,
+  //     "opportunity.name": "Big Deal",
+  //     "opportunity.stage": "Closed Won",
+  //     "opportunity.amount": 45000,
+  //     "opportunity.closeDate": "2024-04-20"
+  //   },
+  //   {
+  //     "accounts.id": 2,
+  //     "accounts.name": "XYZ Industries",
+  //     "accounts.industry": "Manufacturing",
+  //     "accounts.annualRevenue": 900000,
 
-    "contact.id": 22,
-    "contact.firstName": "Priya",
-    "contact.lastName": "Sharma",
-    "contact.email": "priya@example.com",
+  //     "contact.id": 22,
+  //     "contact.firstName": "Priya",
+  //     "contact.lastName": "Sharma",
+  //     "contact.email": "priya@example.com",
 
-    "opportunity.id": 30,
-    "opportunity.name": "Machine Sale",
-    "opportunity.stage": "Negotiation",
-    "opportunity.amount": 120000,
-    "opportunity.closeDate": "2024-08-11"
-  },
-  {
-    "accounts.id": 3,
-    "accounts.name": "Digital Solutions",
-    "accounts.industry": "IT Services",
-    "accounts.annualRevenue": 250000,
+  //     "opportunity.id": 30,
+  //     "opportunity.name": "Machine Sale",
+  //     "opportunity.stage": "Negotiation",
+  //     "opportunity.amount": 120000,
+  //     "opportunity.closeDate": "2024-08-11"
+  //   },
+  //   {
+  //     "accounts.id": 3,
+  //     "accounts.name": "Digital Solutions",
+  //     "accounts.industry": "IT Services",
+  //     "accounts.annualRevenue": 250000,
 
-    "contact.id": 33,
-    "contact.firstName": "Rahul",
-    "contact.lastName": "Patil",
-    "contact.email": "rahul@example.com",
+  //     "contact.id": 33,
+  //     "contact.firstName": "Rahul",
+  //     "contact.lastName": "Patil",
+  //     "contact.email": "rahul@example.com",
 
-    "opportunity.id": 40,
-    "opportunity.name": "Website Upgrade",
-    "opportunity.stage": "Prospecting",
-    "opportunity.amount": 15000,
-    "opportunity.closeDate": "2024-09-15"
-  },
-  {
-    "accounts.id": 4,
-    "accounts.name": "Fresh Mart",
-    "accounts.industry": "Retail",
-    "accounts.annualRevenue": 180000,
+  //     "opportunity.id": 40,
+  //     "opportunity.name": "Website Upgrade",
+  //     "opportunity.stage": "Prospecting",
+  //     "opportunity.amount": 15000,
+  //     "opportunity.closeDate": "2024-09-15"
+  //   },
+  //   {
+  //     "accounts.id": 4,
+  //     "accounts.name": "Fresh Mart",
+  //     "accounts.industry": "Retail",
+  //     "accounts.annualRevenue": 180000,
 
-    "contact.id": 44,
-    "contact.firstName": "Asha",
-    "contact.lastName": "Verma",
-    "contact.email": "asha@example.com",
+  //     "contact.id": 44,
+  //     "contact.firstName": "Asha",
+  //     "contact.lastName": "Verma",
+  //     "contact.email": "asha@example.com",
 
-    "opportunity.id": 55,
-    "opportunity.name": "POS System",
-    "opportunity.stage": "Qualification",
-    "opportunity.amount": 25000,
-    "opportunity.closeDate": "2024-10-20"
-  },
-  {
-    "accounts.id": 5,
-    "accounts.name": "HealthCare Plus",
-    "accounts.industry": "Medical",
-    "accounts.annualRevenue": 750000,
+  //     "opportunity.id": 55,
+  //     "opportunity.name": "POS System",
+  //     "opportunity.stage": "Qualification",
+  //     "opportunity.amount": 25000,
+  //     "opportunity.closeDate": "2024-10-20"
+  //   },
+  //   {
+  //     "accounts.id": 5,
+  //     "accounts.name": "HealthCare Plus",
+  //     "accounts.industry": "Medical",
+  //     "accounts.annualRevenue": 750000,
 
-    "contact.id": 52,
-    "contact.firstName": "Karan",
-    "contact.lastName": "Mehta",
-    "contact.email": "karan@example.com",
+  //     "contact.id": 52,
+  //     "contact.firstName": "Karan",
+  //     "contact.lastName": "Mehta",
+  //     "contact.email": "karan@example.com",
 
-    "opportunity.id": 66,
-    "opportunity.name": "Equipment Lease",
-    "opportunity.stage": "Closed Lost",
-    "opportunity.amount": 95000,
-    "opportunity.closeDate": "2024-03-10"
-  }
-];
+  //     "opportunity.id": 66,
+  //     "opportunity.name": "Equipment Lease",
+  //     "opportunity.stage": "Closed Lost",
+  //     "opportunity.amount": 95000,
+  //     "opportunity.closeDate": "2024-03-10"
+  //   }
+  // ];
 
-
+  rowData: any[] = [];
 
 
 
@@ -201,6 +203,36 @@ export class Report implements OnInit {
     this.loadReportTypes();
     this.getFilters();
   }
+
+
+
+  // function to get the selected columns to make the table data
+
+  selectedFinalColumns(data: string): void {
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Get Saved Report
   getAllSavedReport(): any {
@@ -218,6 +250,9 @@ export class Report implements OnInit {
 
   // Select The report type and load the value into the variable
   loadSelectedData(): any {
+    this.colDefs = []; // Clear previous colDefs
+    this.rowData = []; // Clear previous rowData
+    
 
     if (this.finalSelectedTypeId !== "" && this.finalSelectedTypeId.trim() !== "") {
       this.finalSelectData = this.finalReportTypeData.find(
@@ -225,19 +260,33 @@ export class Report implements OnInit {
       ) || this.finalSelectData;
     }
 
-    this.colDefs = this.generateColDefs(this.finalSelectData);
+    // this.colDefs = this.generateColDefs(this.finalSelectData);
 
 
   }
 
-  onColumnSelect(objectName: string, columnName: string, event: any) {
-    const checked = event.target.checked;
-    console.log(objectName, columnName, checked);
+onColumnSelect(objectName: string, columnName: string, event: any) {
+  const checked = event.target.checked;
+  const columnKey = `${objectName}.${columnName}`;
 
-    // You can store selected columns however you want:
-    // Example:
-    // this.selectedColumns.push({ objectName, columnName, checked });
+  if (checked) {
+    if (!this.selectedColumnsForFinalReport.includes(columnKey)) {
+      this.selectedColumnsForFinalReport.push(columnKey);
+    }
+  } else {
+    this.selectedColumnsForFinalReport =
+      this.selectedColumnsForFinalReport.filter(col => col !== columnKey);
   }
+
+  // ✅ rebuild colDefs every time
+  this.colDefs = this.selectedColumnsForFinalReport.map(col => ({
+    headerName: col,
+    field: col,                // preferred over valueGetter
+    sortable: true,
+    filter: true
+  }));
+}
+
 
 
 
